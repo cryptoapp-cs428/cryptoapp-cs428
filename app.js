@@ -21,9 +21,8 @@ const crypto = require('crypto');
 
 const https = require('https');
 const http = require('http');
-const httpsPort = 8443;
-const httpPort = 8080;
 
+const httpPort = process.env.PORT || 5000;
 
 // Override console.log to also write to output.log file
 // we use this in production
@@ -412,42 +411,13 @@ app.post('/drop', function (req, res) {
 
 models.sequelize.sync().then(function () {
 
-  let sslOptions;
-  try {
-    sslOptions = {
-      cert: fs.readFileSync('./sslcert/fullchain.pem'),
-      key: fs.readFileSync('./sslcert/privkey.pem')
-    };
-  } catch (e) {
-    console.log("Error: Cannot load ssl certificates: " + e);
-  }
 
-  if (sslOptions !== undefined) {
 
-    // HTTPS
-    let httpsServer = https.createServer(sslOptions, app).listen(httpsPort, () => {
-      console.log('╔═════════════════════════╗');
-      console.log('║ HTTPS Started Port '+httpsPort+' ║');
-      console.log('╚═════════════════════════╝');
-    });
-
-    // HTTP REDIRECT TO HTTPS
-    http.createServer((req, res) => {
-      res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
-      res.end();
-    }).listen(httpPort, () => {
-      console.log('http redirect on '+httpPort+'..');
-    });
-
-  } else {
-    console.log('HTTPS unavailable (no SSL Certs)');
-    // HTTP
-    let httpServer = http.createServer(app).listen(httpPort, () => {
-      console.log('╔════════════════════════╗');
-      console.log('║ HTTP Started Port '+httpPort+' ║');
-      console.log('╚════════════════════════╝');
-    });
-  }
+  let httpServer = http.createServer(app).listen(httpPort, () => {
+    console.log('╔════════════════════════╗');
+    console.log('║ HTTP Started Port '+httpPort+' ║');
+    console.log('╚════════════════════════╝');
+  });
 
 });
 
