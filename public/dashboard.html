@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<!--
+  Stellar by HTML5 UP
+  html5up.net | @ajlkn
+  Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>Crypto App Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="assets/js/highcharts.js"></script>
+    <script>
+
+
+      let getRandomColor = () => {
+        return "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+      }
+
+      let getRandomHash = () => {
+        return [...Array(30)].map(() => Math.random().toString(36)[3]).join('');
+      }
+
+      let loadUserData = () => {
+        console.log('loadUserData..');
+
+        fetch('user', {
+          method: 'get',
+          credentials: 'include',
+
+        }).then(function(response) {
+          return response.json();
+
+        }).then(function(json) {
+          console.log(json);
+
+          let idElement = document.querySelector('#user-id');
+          idElement.textContent = json.id;
+
+          let colorElement = document.querySelector('#user-color');
+          colorElement.style.backgroundColor = json.color;
+
+          let emailElement = document.querySelector('#user-email');
+          emailElement.textContent = json.email;
+
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
+
+
+      let renderAnimals = (animals) => {
+        let listAnimalsElement = document.querySelector('#list-animals');
+
+        let rows = '';
+        animals.forEach(animal => {
+          rows += `
+          <tr>
+            <td><b class="animal-owner">${animal.userId}</b></td>
+            <td><b class="animal-name">${animal.name}</b></td>
+            <td style="background-color:${animal.color};"><b class="animal-color"></b></td>
+          </tr>`;
+        });
+
+        listAnimalsElement.innerHTML = rows;
+      }
+
+      let loadAnimals = () => {
+        console.log('loadAnimals..');
+
+        fetch('animals', {
+          method: 'get',
+          credentials: 'include',
+
+        }).then(function(response) {
+          return response.json();
+
+        }).then(function(json) {
+          console.log('animals:');
+          console.dir(json);
+
+          renderAnimals(json);
+
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
+
+      let changeColor = () => {
+        console.log('changeColor..')
+
+        let body = {color: getRandomColor()}
+
+        fetch('user-stats', {
+          method: 'post',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+
+        }).then(function(response) {
+          console.log(response);
+          loadUserData(); // Reload data
+
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
+
+
+      let addAnimal = () => {
+        console.log('addAnimal..')
+
+        let newAnimalNameElement = document.querySelector('#new-animal-name');
+        let newAnimalName = newAnimalNameElement.value;
+
+        let body = {
+          name: newAnimalName,
+          sourceHash: getRandomColor(),
+          color: getRandomColor(),
+        }
+
+        fetch('animals', {
+          method: 'post',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }).then(function(response) {
+          loadAnimals(); // Reload animals
+
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
+
+      // Run on startup
+      window.onload = () => { 
+        loadUserData() 
+        loadAnimals() 
+      }
+
+    </script>
+
+  </head>
+  <body>
+
+    <!-- Wrapper -->
+      <div id="wrapper">
+
+        <!-- Header -->
+          <header id="header">
+            <h1>Member Dashboard</h1>
+            <p>Buy Some Puppies to Get Started</p>
+          </header>
+
+        <!-- Main -->
+          <div id="main">
+
+            <!-- Content -->
+              <section id="content" class="main">
+
+                <hr/>
+
+                <h1>User Info</h1>
+                <div class="table-wrapper">
+                  <table class="alt">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><b>ID</b></td>
+                        <td><b id="user-id"></b></td>
+                      </tr>
+                      <tr>
+                        <td><b>Email</b></td>
+                        <td><b id="user-email"></b></td>
+                      </tr>
+                      <tr>
+                        <td><b>Color</b></td>
+                        <td id="user-color"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3>Actions</h3>
+                <ul class="actions">
+                  <li><a class="button special" onclick="changeColor()">Generate New Color</a></li>
+                </ul>
+
+                <hr/>
+
+                <h1>Animals</h1>
+                <div class="table-wrapper">
+                  <table class="alt">
+                    <thead>
+                      <tr>
+                        <th>Owner</th>
+                        <th>Name</th>
+                        <th>Color</th>
+                      </tr>
+                    </thead>
+                    <tbody id="list-animals">
+                      <tr>
+                        <td><b id="animal-owner">_</b></td>
+                        <td><b id="animal-name">_</b></td>
+                        <td><b id="animal-color">_</b></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3>Actions</h3>
+
+                <ul class="actions">
+                  <li><input type="text" name="new-animal-name" id="new-animal-name" value="" placeholder="Animal Name" /></li>
+                  <li><a class="button special" onclick="addAnimal()">Create New Animal</a></li>
+                </ul>
+                  
+
+              </section>
+          </div>
+
+        <!-- Footer -->
+          <footer id="footer">
+            <p class="copyright">&copy; Crypto App. Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>.</p>
+          </footer>
+
+      </div>
+
+    <!-- Scripts -->
+      <script src="assets/js/jquery.min.js"></script>
+      <script src="assets/js/jquery.scrollex.min.js"></script>
+      <script src="assets/js/jquery.scrolly.min.js"></script>
+      <script src="assets/js/skel.min.js"></script>
+      <script src="assets/js/util.js"></script>
+      <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+      <script src="assets/js/main.js"></script>
+
+  </body>
+</html>

@@ -1,31 +1,31 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
-  "engines": {
-    "node": "8.9.1"
-  },
-  "main": "index.js",
+  "name": "crypto-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "proxy": "http://localhost:8080",
   "scripts": {
-    "start": "node index.js",
-    "test": "node test.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-server": "nodemon app.js || node app.js"
   },
+  "author": "",
   "dependencies": {
-    "ejs": "^2.5.6",
-    "express": "^4.15.2"
-  },
-  "devDependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.17.2",
+    "chrome-launcher": "^0.8.0",
+    "chrome-remote-interface": "^0.24.5",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.1",
+    "jsonwebtoken": "^7.4.3",
+    "mysql": "^2.14.1",
+    "mysql2": "^1.4.0",
+    "nodemailer": "^4.1.0",
     "request": "^2.81.0",
-    "tape": "^4.7.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+    "sequelize": "^4.4.2",
+    "stripe": "^5.1.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.0"
+  }
 }
