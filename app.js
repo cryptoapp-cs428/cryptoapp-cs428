@@ -38,7 +38,6 @@ app.use(cookieParser());
 // Import mysql models
 let models = require('./models');
 
-
 // Configure email details
 let transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -153,12 +152,12 @@ app.post('/login', (req, res) => {
   });
 });
 
-
 app.get('/logout', (req, res) => {
   console.log('');
   console.log('logout tried..');
 
   res.clearCookie('token');
+
   return res.status(200).redirect('/login');
 });
 
@@ -256,7 +255,6 @@ function createUser(req, res, email, password, cb) {
         }).then(function (newUser) {
 
           console.log('..user created');
-          console.dir(newUser);
 
           // User has logged in
           let token = jwt.sign({email: newUser.email}, process.env.TOKEN_SECRET, {

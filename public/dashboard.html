@@ -115,6 +115,22 @@
         });
       }
 
+      let logOut = () => {
+        console.log('logOut..')
+
+        fetch('logout', {
+          method: 'get',
+          credentials: 'include'
+        }).then(function(response) {
+          if (response.redirected) {
+            return window.location.replace(response.url);
+          }
+
+          console.log(response);
+        }).catch(function(err) {
+          console.log(err);
+        });
+      }
 
       let addAnimal = () => {
         console.log('addAnimal..')
@@ -230,6 +246,13 @@
                 <ul class="actions">
                   <li><input type="text" name="new-animal-name" id="new-animal-name" value="" placeholder="Animal Name" /></li>
                   <li><a class="button special" onclick="addAnimal()">Create New Animal</a></li>
+                </ul>
+
+
+                <hr/>
+
+                <ul class="actions">
+                  <li><a class="button special" onclick="logOut()">Log Out</a></li>
                 </ul>
                   
 
