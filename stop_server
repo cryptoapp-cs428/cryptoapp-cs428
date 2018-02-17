@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# # See if running on port
-# sudo lsof -i tcp:8080
-
-# Stop node server
-sudo pkill node || echo "Node wasnt running.."
-
