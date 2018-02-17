@@ -24,18 +24,6 @@ const http = require('http');
 
 const httpPort = process.env.PORT || 5000;
 
-// Override console.log to also write to output.log file
-// we use this in production
-const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'w'});
-console.log = (d) => { //
-  log_file.write(util.format(d) + '\n');
-  process.stdout.write(d + '\n');
-};
-console.dir = (d) => {
-  console.log(JSON.stringify(d, null, 2));
-}
-
-
 console.log('')
 console.log('Starting..');
 
