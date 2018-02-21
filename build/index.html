@@ -1,0 +1,184 @@
+  <!DOCTYPE HTML>
+  <!--
+    Stellar by HTML5 UP
+    html5up.net | @ajlkn
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+  -->
+  <html>
+    <head>
+      <title>Crypto App</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+    </head>
+    <body>
+
+
+      <!-- Wrapper -->
+        <div id="wrapper">
+
+          <!-- Header -->
+            <header id="header" class="alt">
+              <span class="logo"><img src="images/logo.svg" alt="" /></span>
+              <h1>Crypto App</h1>
+              <p>This is the best crypto app there is.</p>
+
+              <footer class="major">
+                <ul class="actions">
+                  <li><a href="#join" class="button special">Join</a></li>
+                  <li><a href="dashboard" class="button">User Login</a></li>
+                </ul>
+              </footer>
+
+            </header>
+
+          <!-- Nav -->
+            <nav id="nav">
+              <ul>
+                <li><a href="#features" class="active">Features</a></li>
+                <li><a href="#join">Join</a></li>
+              </ul>
+            </nav>
+
+
+          <noscript>
+            You need to enable JavaScript to run this app.
+          </noscript>
+          <div id="root"></div>
+
+          <!-- Main -->
+            <div id="main">
+
+              <!-- Introduction -->
+                <section id="features-invite" class="main">
+                  <div class="spotlight">
+                    <span class="image"><img src="images/pup-1.jpg" alt="" /></span>
+                    <div class="content">
+                      <header class="major">
+                        <h2>Adopt a Puppy</h2>
+                      </header>
+                      <p>Join to adopt a super cute puppy. You can make it your own.</p>
+                      <ul class="actions">
+                        <li><a href="generic.html" class="button">Learn More</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+
+              <!-- Accept Connections Section -->
+                <section id="features" class="main">
+                  <div class="spotlight">
+                    <div class="content">
+                      <header class="major">
+                        <h2>Own Your Puppy With Ethereum</h2>
+                      </header>
+                      <p>No one is gonna steal this puppy from you. It's yours. That's all there is to it.</p>
+                      <ul class="actions">
+                        <li><a href="generic.html" class="button">Learn More</a></li>
+                      </ul>
+                    </div>
+                    <span class="image"><img src="images/pup-2.jpg" alt="" /></span>
+                  </div>
+                </section>
+
+              <!-- First Section -->
+                <section id="benefits" class="main special">
+                  <header class="major">
+                    <h2>This Sounds Too Good To Be True</h2>
+                  </header>
+                  <ul class="features">
+                    <li>
+                      <span class="icon major style1 fa-heart"></span>
+                      <h3>Did We Mention How Cute They Are</h3>
+                      <p>So Cute.</p>
+                    </li>
+                    <li>
+                      <span class="icon major style3 fa-clock-o"></span>
+                      <h3>Convenient</h3>
+                      <p>Travel the world and take your puppy with you everywhere you go. Don't pay for shipping costs. Your friends will be jealous.</p>
+                    </li>
+                    <li>
+                      <span class="icon major style5 fa-usd"></span>
+                      <h3>Cost Effective</h3>
+                      <p>For a very cheap price, your puppy will give you a fulfilling life. 99.9% Effective.</p>
+                    </li>
+                  </ul>
+                  <footer class="major">
+                    <ul class="actions">
+                      <li><a href="generic.html" class="button">Learn More</a></li>
+                    </ul>
+                  </footer>
+                </section>
+
+              <!-- Get Started -->
+                <section id="join" class="main special">
+                  <header class="major">
+                    <h2>Join Crypto Puppies</h2>
+                    <p>Create an account to start buying puppies.</p>
+                  </header>
+
+
+
+
+
+
+                  <!-- Form -->
+                  <form action="/join" method="post">
+                    <div class="row uniform">
+
+                      <div class="center">
+                        <div class="item-box 6u 8u$(xsmall)">
+                          <input type="email" name="email" id="field-email" value="" placeholder="Email" />
+                        </div>
+                        <div class="item-box 6u$ 8u$(xsmall)">
+                          <input type="password" name="password" id="field-password" value="" placeholder="Password" />
+                        </div>
+
+                        <div class="item-box 6u$ 8u$(xsmall)">
+                          <input type="submit" value="Register" class="button special">
+                        </div>
+                      </div>
+
+
+                    </div>
+                  </form>
+
+                </section>
+            </div>
+
+
+          <!-- Footer -->
+            <footer id="footer">
+              <p class="copyright">&copy; Crypto App. Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>.</p>
+            </footer>
+
+        </div>
+
+      <!-- Scripts -->
+        <link async rel="stylesheet" href="assets/css/main.css" />
+
+        <script async src="assets/js/jquery.min.js"></script>
+        <script async src="assets/js/jquery.scrollex.min.js"></script>
+        <script async src="assets/js/jquery.scrolly.min.js"></script>
+        <script async src="assets/js/skel.min.js"></script>
+        <script async src="assets/js/util.js"></script>
+        <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+        <script async src="assets/js/main.js"></script>
+
+        <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+        <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+        <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+        <link async rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script>
+          
+          fetch('names')
+            .then(res => res.json())
+            .then((result) => {
+              console.dir(result);
+            });
+        </script>
+
+    </body>
+  </html>
