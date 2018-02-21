@@ -3,8 +3,6 @@ CryptoApp
 ## .env File
 
 ```
-TIMES=2
-
 # Prod DB
 DB_URL='mysql://[user]:[password]@[connection_str]:3306/[db_name]'
 
