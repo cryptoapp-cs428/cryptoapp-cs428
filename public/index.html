@@ -41,6 +41,12 @@
               </ul>
             </nav>
 
+
+          <noscript>
+            You need to enable JavaScript to run this app.
+          </noscript>
+          <div id="root"></div>
+
           <!-- Main -->
             <div id="main">
 
@@ -164,6 +170,15 @@
         <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
         <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
         <link async rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script>
+          
+          fetch('names')
+            .then(res => res.json())
+            .then((result) => {
+              alert(result);
+            });
+        </script>
 
     </body>
   </html>

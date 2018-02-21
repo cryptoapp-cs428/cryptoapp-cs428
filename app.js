@@ -111,6 +111,9 @@ app.get('/login', function (req, res) {
 // API //
 /////////
 
+app.get('/names', function (req, res) {
+ return res.json({names: [{first: 'Carl', last: 'Smith'}, {first: 'Boof', last: 'Nasty'}]});
+});
 
 app.post('/login', (req, res) => {
   console.log('');

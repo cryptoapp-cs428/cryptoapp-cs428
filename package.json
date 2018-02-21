@@ -1,19 +1,11 @@
 {
-  "name": "crypto-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "proxy": "http://localhost:8080",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start-server": "nodemon app.js || node app.js"
-  },
-  "author": "",
+  "name": "cryptoapp-cs428",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
-    "chrome-launcher": "^0.8.0",
-    "chrome-remote-interface": "^0.24.5",
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "express": "^4.16.1",
@@ -23,9 +15,14 @@
     "nodemailer": "^4.1.0",
     "request": "^2.81.0",
     "sequelize": "^4.4.2",
-    "stripe": "^5.1.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }
