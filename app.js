@@ -86,7 +86,7 @@ function authenticateRequest(req, res, cb) {
 //////////////////
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname + '/index.html'));
+  res.sendFile(path.join(__dirname + '/build/index.html'));
 });
 
 app.get('/elements', function (req, res) {
