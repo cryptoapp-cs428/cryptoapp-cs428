@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import './dashboard.css';
+import AnimalsList from './AnimalsList';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<AnimalsList />, document.getElementById('root-animals-list'));
 registerServiceWorker();

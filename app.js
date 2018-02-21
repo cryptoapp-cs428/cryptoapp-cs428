@@ -29,7 +29,8 @@ console.log('Starting..');
 
 
 // Configure Express
-app.use(express.static('public'));
+// app.use(express.static('public'));
+app.use(express.static('build'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -51,7 +52,7 @@ function authenticateRequest(req, res, cb) {
   // Check if token exists
   if (!token) {
     console.log('User didnt provide token..');
-    res.redirect('/login');
+    res.redirect('/login.html');
     return;
   }
 
@@ -68,9 +69,9 @@ function authenticateRequest(req, res, cb) {
         if (!user) {
           // invalid user login
           console.log('Invalid login email..');
-          return res.redirect('/login');
+          return res.redirect('/login.html');
         } else if (!user.verified) {
-          return res.redirect('/verify');
+          return res.redirect('/verify.html');
         } else {
           cb(user);
         }
@@ -89,21 +90,22 @@ app.get('/', function (req, res) {
 });
 
 app.get('/elements', function (req, res) {
-  res.sendFile(path.join(__dirname + '/public/elements.html'));
+  res.sendFile(path.join(__dirname + '/build/elements.html'));
 });
 
 app.get('/verify', function (req, res) {
-  res.sendFile(path.join(__dirname + '/public/verify.html'));
+  console.log('verify...')
+  res.sendFile(path.join(__dirname + '/build/verify.html'));
 });
 
 app.get('/dashboard', function (req, res) {
   authenticateRequest(req, res, user => {
-    res.sendFile(path.join(__dirname + '/public/dashboard.html'));
+    res.sendFile(path.join(__dirname + '/build/dashboard.html'));
   });
 });
 
 app.get('/login', function (req, res) {
-  res.sendFile(path.join(__dirname + '/public/login.html'));
+  res.sendFile(path.join(__dirname + '/build/login.html'));
 });
 
 
@@ -150,7 +152,7 @@ app.post('/login', (req, res) => {
         httpOnly: false
       });
 
-      return res.redirect('/dashboard');
+      return res.redirect('/dashboard.html');
     });
   });
 });
@@ -186,7 +188,7 @@ app.post('/animals', (req, res) => {
   console.log('Name: ' + req.body.name);
 
   authenticateRequest(req, res, user => {
-    if (!user) { return res.redirect('/login') }
+    if (!user) { return res.redirect('/login.html') }
 
     // Store the animal
     models.Animal.create({
@@ -298,7 +300,7 @@ app.post('/verify',function(req,res){
         httpOnly : false
       });
 
-      res.redirect('/dashboard');
+      res.redirect('/dashboard.html');
     });
   });
 });
@@ -325,7 +327,7 @@ app.post('/join', async (req, res) => {
   createUser(req, res, email, password, (newUser) => {
     console.log('User added: ' + newUser.email);
     console.log('redirect..');
-    return res.redirect('/dashboard');
+    return res.redirect('/verify.html');
   });
 });
 

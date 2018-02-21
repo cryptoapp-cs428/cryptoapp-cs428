@@ -15,7 +15,6 @@
     <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <script src="assets/js/highcharts.js"></script>
     <script>
 
 
@@ -62,9 +61,9 @@
         animals.forEach(animal => {
           rows += `
           <tr>
-            <td><b class="animal-owner">${animal.userId}</b></td>
-            <td><b class="animal-name">${animal.name}</b></td>
-            <td style="background-color:${animal.color};"><b class="animal-color"></b></td>
+            <td><b class="animal-owner">`+animal.userId+`</b></td>
+            <td><b class="animal-name">`+animal.name+`</b></td>
+            <td style="background-color:`+animal.color+`"><b class="animal-color"></b></td>
           </tr>`;
         });
 
@@ -183,6 +182,7 @@
         <!-- Main -->
           <div id="main">
 
+
             <!-- Content -->
               <section id="content" class="main">
 
@@ -221,7 +221,7 @@
 
                 <hr/>
 
-                <h1>Animals</h1>
+                <h1>Animals JS</h1>
                 <div class="table-wrapper">
                   <table class="alt">
                     <thead>
@@ -238,6 +238,23 @@
                         <td><b id="animal-color">_</b></td>
                       </tr>
                     </tbody>
+
+                  </table>
+                </div>
+
+                <h1>Animals REACT</h1>
+                <div class="table-wrapper">
+                  <table class="alt">
+                    <thead>
+                      <tr>
+                        <th>Owner</th>
+                        <th>Name</th>
+                        <th>Color</th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="root-animals-list"></tbody>
+
                   </table>
                 </div>
 
