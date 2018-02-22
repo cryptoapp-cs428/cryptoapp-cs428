@@ -1,4 +1,4 @@
-CryptoApp
+#CryptoApp
 
 ## Getting Started
 
