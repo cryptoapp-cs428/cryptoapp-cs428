@@ -8,6 +8,7 @@ $ git clone https://github.com/cryptoapp-cs428/cryptoapp-cs428.git
 $ cd cryptoapp-cs428
 $ npm install
 ```
+Then add the `.env` file (directions shown below)
 
 ## Start the backend node.js server
 `$ npm run server`
