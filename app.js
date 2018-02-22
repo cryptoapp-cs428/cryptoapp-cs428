@@ -24,12 +24,11 @@ const http = require('http');
 
 const httpPort = process.env.PORT || 5000;
 
-console.log('')
+console.log('');
 console.log('Starting..');
 
 
 // Configure Express
-// app.use(express.static('public'));
 app.use(express.static('build'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -108,14 +107,9 @@ app.get('/login', function (req, res) {
   res.sendFile(path.join(__dirname + '/build/login.html'));
 });
 
-
 /////////
 // API //
 /////////
-
-app.get('/names', function (req, res) {
- return res.json({names: [{first: 'Carl', last: 'Smith'}, {first: 'Boof', last: 'Nasty'}]});
-});
 
 app.post('/login', (req, res) => {
   console.log('');
@@ -173,8 +167,10 @@ app.get('/animals', (req, res) => {
 
   authenticateRequest(req, res, user => {
     models.Animal.findAll()
+    // models.Animal.findAll({where: {
+    //   userId: user.id
+    // }})
     .then(function(animalsRaw) {
-
       // Grab just the date and the count
       // let animals = animalsRaw.map((animal) => { return {date: animal.date, color: animal.color}});
       return res.status(200).send(animalsRaw);

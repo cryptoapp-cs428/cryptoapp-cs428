@@ -44,7 +44,6 @@ class AnimalsList extends Component {
     } else {
       return (
         animals.map(animal => (
-            
           <tr>
             <td><b className="animal-owner">{animal.userId}</b></td>
             <td><b className="animal-name">{animal.name}</b></td>
