@@ -13,7 +13,7 @@ Then add the `.env` file (directions shown below)
 ## Start the backend node.js server
 `$ npm run server`
 
-## Start the frontend React client
+## Start the frontend React client (you will need to run the server too!)
 `$ npm run client`
 
 ## Deploy frontend changes
