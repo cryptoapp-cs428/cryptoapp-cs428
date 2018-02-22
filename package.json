@@ -102,5 +102,17 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  }
+  },
+  "description": "CryptoApp",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptoapp-cs428/cryptoapp-cs428.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cryptoapp-cs428/cryptoapp-cs428/issues"
+  },
+  "homepage": "https://github.com/cryptoapp-cs428/cryptoapp-cs428#readme"
 }
