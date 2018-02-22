@@ -1,0 +1,38 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+
+# Install mysql, 
+# https://dev.mysql.com/downloads/mysql/
+
+# # On EC2 AMI
+# wget https://dev.mysql.com/get/mysql57-community-release-el6-11.noarch.rpm
+# yum localinstall mysql57-community-release-el6-11.noarch.rpm
+# yum remove mysql55 mysql55-common mysql55-libs mysql55-server
+# yum install mysql-community-server
+# service mysqld restart
+# mysql_upgrade -p
+
+# # Reset password
+# sudo /etc/init.d/mysqld stop
+# sudo mysqld_safe --skip-grant-tables &
+# mysql -uroot
+
+
+
+# then login using:
+sudo /usr/local/mysql-5.7.19-macos10.12-x86_64/bin/mysql -u root -p
+
+# you may need to reset the password using the --skip-grant-tables stuff (google it)
+
+# Once inside mysql, use this command to create a db
+# mysql> create database cryptoapp;
+# mysql> quit
+
+
+
+
+
+
+
+
+
