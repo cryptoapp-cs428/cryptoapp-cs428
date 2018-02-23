@@ -1,5 +1,3 @@
-//import web3 from './src/web3';
-
 require('dotenv').load();
 
 const fs = require('fs');
@@ -24,11 +22,9 @@ const https = require('https');
 const http = require('http');
 
 const httpPort = process.env.PORT || 5000;
-//const web3 = require('./src/web3');
 
 console.log('');
 console.log('Starting..');
-//console.log('WEB3 Version: ' + web3.version);
 
 
 // Configure Express
