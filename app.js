@@ -402,7 +402,6 @@ app.post('/drop', function (req, res) {
 models.sequelize.sync().then(function () {
 
 
-
   let httpServer = http.createServer(app).listen(httpPort, () => {
     console.log('╔════════════════════════╗');
     console.log('║ HTTP Started Port '+httpPort+' ║');
