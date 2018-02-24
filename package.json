@@ -46,6 +46,7 @@
     "react-dom": "^16.2.0",
     "request": "^2.81.0",
     "sequelize": "^4.4.2",
+    "solc": "^0.4.20",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.6.2",
@@ -56,6 +57,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
+    "solidity:build": "node solidity/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "client": "node scripts/start.js",
     "server": "node app.js"
