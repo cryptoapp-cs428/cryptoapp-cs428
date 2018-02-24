@@ -24,6 +24,9 @@ Then make a pull request
 
 Create a file called `.env` and place it in the root directory at `cryptoapp-cs428/.env`
 ```
+# React uses this to build prod files
+PUBLIC_URL='https://cryptoapp-cs428.herokuapp.com'
+
 # Prod DB
 DB_URL='mysql://[user]:[password]@[connection_str]:3306/[db_name]'
 
