@@ -30,7 +30,7 @@ DB_URL='mysql://[user]:[password]@[connection_str]:3306/[db_name]'
 # Local DB
 # DB_URL='mysql://root:[password]@127.0.0.1:3306/[db_name]'
 
-# Token 
+# Token
 TOKEN_SECRET='[token_secret]'
 
 # Email Verification
@@ -45,3 +45,14 @@ ENDPOINT='http://localhost:5000'
 
 ```
 
+## Deploying a contract instance
+
+Use this command to deploy an instance of the solidity contract:
+```sh
+npm run solidity:deploy
+```
+
+To deploy from a custom account, set a `DEPLOY_MNEMONIC` environment variable
+with the mnemonic of the account to use. You can also set a `DEPLOY_ACCT_INDEX`
+environment variable to specify which account to use. (The default index is 0,
+and the default account is `0x41387f90C3BE2C13E6775CbF2AD1A3A5BbE9B2DE`)

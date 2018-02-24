@@ -1,0 +1,4 @@
+# This line makes the package-lock.json not show up in diffs, since it can get
+# pretty big. (It will just say "binary files [yada yada] differ"). To view text
+# diffs, just comment this line out.
+package-lock.json binary
