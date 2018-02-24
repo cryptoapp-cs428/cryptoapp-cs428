@@ -5,6 +5,7 @@ const solc = require('solc');
 const contractPath = path.resolve(__dirname, 'contracts', 'AnimalBase.sol');
 const src = fs.readFileSync(contractPath, 'utf8');
 
+console.log("Compiling...");
 const contract = solc.compile(src, 1).contracts[':AnimalBase'];
 
 module.exports = {
