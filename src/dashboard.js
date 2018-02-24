@@ -8,6 +8,6 @@ import web3 from './eth/web3.js';
 ReactDOM.render(<AnimalsList />, document.getElementById('root-animals-list'));
 registerServiceWorker();
 
-if (!web3.version) {
+if (!web3) {
 	alert("No injected Web3 was detected. :( You need to be using MetaMask to use this application.")
 }
