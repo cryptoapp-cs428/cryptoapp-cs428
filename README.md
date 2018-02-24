@@ -22,7 +22,7 @@ Then make a pull request
 
 ## Set up environment variables
 
-Create a file called `.env` and place it in the root directory at `cryptoapp-cs428/.env`
+Create a file called `.env` and place it in the root directory at `cryptoapp-cs428/.env`. Your contents should look like the lines below, but note that these have placeholders that should be replaced with actual values (or your setup won't work correctly).
 ```
 # Prod DB
 DB_URL='mysql://[user]:[password]@[connection_str]:3306/[db_name]'
