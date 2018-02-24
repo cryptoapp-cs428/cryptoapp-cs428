@@ -61,7 +61,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "solidity:build": "node solidity/build.js",
+    "solidity:compile": "node solidity/compile.js",
     "solidity:test": "mocha solidity/tests/",
     "solidity:deploy": "node solidity/deploy.js",
     "test": "node scripts/test.js --env=jsdom",

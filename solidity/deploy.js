@@ -7,11 +7,11 @@ if (!mnemonic) {
 	throw new Error("You need to specify a DEPLOY_MNEMONIC string in your .env file");
 }
 
-const { abi, bytecode} = require('./build');
+const { abi, bytecode} = require('./compile');
 
 
 const provider = new HDWalletProvider(
-	'various then junior outdoor prosper six column orchard soft town home machine',
+	mnemonic,
 	'https://rinkeby.infura.io/6ez8Sc5cp5zniGCMP56R'
 );
 
