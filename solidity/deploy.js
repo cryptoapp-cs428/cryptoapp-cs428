@@ -35,5 +35,6 @@ const web3 = new Web3(provider);
 		})
 
 	console.log("Deployed to ", result.options.address);
+	console.log("Contract Interface: ", abi);
 
 })().catch(console.error);
