@@ -43,6 +43,9 @@ ENDPOINT='http://localhost:5000'
 # Endpoint URL prod
 # ENDPOINT='https://cryptoapp.ml'
 
+# React uses this to build prod files
+PUBLIC_URL='https://cryptoapp-cs428.herokuapp.com'
+
 ```
 
 ## Deploying a contract instance

@@ -232,7 +232,8 @@ function createUser(req, res, email, password, cb) {
           from: 'Email Verification <' + process.env.EMAIL_USER + '>',
           to: email,
           subject: 'Please confirm your Email account -- Crypto App',
-          html: `<p>Hello,<br> Please enter this code ${verifyCode} to verify your email.</p>`
+          html: `<html><p>Hello,<br> Please enter this code ${verifyCode} to verify your email.</p></html>`,
+          text: `Please enter this code ${verifyCode} to verify your email.`
         };
         // html: `<p>Hello,<br> Please <a href=${verifyCode}>click here</a> to verify your email.</p><br/>
                  // or enter this code ${verifyCode}`,
