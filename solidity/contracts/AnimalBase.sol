@@ -33,7 +33,21 @@ contract AnimalBase {
     /// @dev A mapping from animal IDs to the address that owns them. All animals have
     ///  some valid owner address.
     mapping (uint256 => address) public animalIndexToOwner;
-    
+		
+		/*
+		NOTE: Why don't we have a mapping from owner to animals?
+		https://www.reddit.com/r/CryptoKitties/comments/7isosj/why_does_tokensofowner_to_find_all_the_kitties/
+		
+		From Dieter, CryptoKitties' technical architect:
+		
+		"tokensOfOwner was not implemented efficiently because doing so would require a lot of (expensive) storage in the blockchain. Instead, we just loop over all the cats and see if their owner matches the function argument.
+
+		Sadly, geth apparently just kills a function if it takes too long and returns an empty response. (The function was never intended to be called on-chain.)
+
+		It turns out that our own backend doesn't ever call this function, because we have to track the ownership and data for each and every cat. When we want to know what cats a person owns, we just query a database."
+		
+		*/
+		
     /*** API ***/
     
     function AnimalBase() public {
@@ -42,11 +56,10 @@ contract AnimalBase {
     
     /// @dev Create a new animal and assign it to be owned by the purchaser.
     /// Returns the id of the new animal
-    function buyAnimal() public payable returns (uint) {
+    function buyAnimal() public payable {
         require(msg.value == animalPrice);
         uint genes = _random();
         uint id = _createAnimal(genes, msg.sender);
-        return id;
     }
     
     function getAnimalCount() public view returns (uint) {
