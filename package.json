@@ -14,10 +14,10 @@
     "bcrypt": "^1.0.3",
     "body-parser": "^1.17.2",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
-    "chalk": "1.1.3",
+    "chalk": "^2.3.1",
     "cookie-parser": "^1.4.3",
     "css-loader": "0.28.7",
-    "dotenv": "4.0.0",
+    "dotenv": "^5.0.1",
     "dotenv-expand": "4.2.0",
     "eslint": "4.10.0",
     "eslint-config-react-app": "^2.1.0",
@@ -33,7 +33,7 @@
     "ganache-cli": "^6.0.3",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
-    "jsonwebtoken": "^7.4.3",
+    "jsonwebtoken": "^8.1.1",
     "mocha": "^5.0.1",
     "mysql": "^2.14.1",
     "mysql2": "^1.4.0",
@@ -66,7 +66,7 @@
     "solidity:deploy": "node solidity/deploy.js",
     "test": "node scripts/test.js --env=jsdom",
     "client": "node scripts/start.js",
-    "server": "node app.js"
+    "server": "node server/app.js"
   },
   "jest": {
     "collectCoverageFrom": [

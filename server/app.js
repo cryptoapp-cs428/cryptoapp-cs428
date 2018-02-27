@@ -405,26 +405,3 @@ models.sequelize.sync().then(function () {
   });
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
