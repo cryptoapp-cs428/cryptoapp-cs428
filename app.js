@@ -1,4 +1,3 @@
-
 require('dotenv').load();
 
 const fs = require('fs');
