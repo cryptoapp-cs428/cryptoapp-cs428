@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './AnimalsList.css';
-import web3 from './eth/web3.js';
-import contract from './eth/animalContract';
+import blockchain from './eth/blockchain';
 
 class AnimalsList extends Component {
   constructor(props) {
@@ -16,25 +15,8 @@ class AnimalsList extends Component {
 
   async componentDidMount() {
 		// Get animals from Blockchain via Metamask
-		const animalCount = await contract.methods.getAnimalCount().call();
-		const accounts = await web3.eth.getAccounts();
-		const userID = accounts[0];
-		console.log("UserID: ", userID);
-		
-		let newAnimals = new Array();
-		// TODO: Solidity Team: We should probably make animal retrieval by owner simpler. I think we can do that by storing a mapping of ownerID to animals.
-		for (let id = 0; id < animalCount; id++) {
-			const ownerID = await contract.methods.animalIndexToOwner(id).call();
-			console.log(ownerID);
-			if (ownerID == userID) {
-				console.log("Animal is owned: ", id);
-			}
-			newAnimals.push({
-				userID: ownerID,
-				name: id,
-				color: '#FF00FF',
-			});
-		}
+		let animals = await blockchain.getUserAnimals();
+    this.setState({ animals });
   }
 
   render() {
