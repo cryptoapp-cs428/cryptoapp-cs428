@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './dashboard.css';
 import AnimalsList from './AnimalsList';
 import registerServiceWorker from './registerServiceWorker';
-import web3 from './eth/web3.js';
+import web3 from './eth/web3';
 
 //import contract from './eth/animalContract';
 
