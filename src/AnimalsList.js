@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './AnimalsList.css';
-import web3 from './eth/web3.js';
+import web3 from './eth/web3';
 import contract from './eth/animalContract';
 
 class AnimalsList extends Component {
