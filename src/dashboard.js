@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './dashboard.css';
 import AnimalsList from './AnimalsList';
@@ -8,17 +8,17 @@ import web3 from './eth/web3.js';
 //import contract from './eth/animalContract';
 
 //class AnimalContractInterfacer extends Component {
-//	
+//
 //	constructor(props) {
 //		super(props);
 //		this.state = {manager: ''};
 //	}
-//	
+//
 //	async componentDidMount() {
 //		const manager = await contract.methods.manager().call();
 //		this.setState({ manager });
 //	}
-//	
+//
 //	render() {
 //		return (
 //			<div>
@@ -37,5 +37,3 @@ registerServiceWorker();
 if (!web3) {
 	alert("No injected Web3 was detected. :( You need to be using MetaMask to use this application.");
 }
-
-

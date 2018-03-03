@@ -22,9 +22,13 @@ class AnimalsList extends Component {
   render() {
     const { error, isLoaded, animals } = this.state;
     if (error) {
-      return <div>Error: {error.message}</div>;
+      return (
+        <tr><td>Error: {error.message}</td></tr>
+      );
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return (
+        <tr><td>Loading...</td></tr>
+      );
     } else {
       return (
         animals.map(animal => (
