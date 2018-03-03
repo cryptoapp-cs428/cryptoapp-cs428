@@ -1,4 +1,5 @@
 import web3 from './web3';
-import blockchainUtils from './blockchainUtils';
+// This blockchainClientUtils is actually a symlink to solidity/client/blockchainUtils.js
+import blockchainUtils from './blockchainClientUtils';
 
 export default blockchainUtils(web3);
