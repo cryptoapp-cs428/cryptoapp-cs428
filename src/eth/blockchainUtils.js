@@ -1,6 +1,6 @@
 const { abi, address } = require('./animalContract');
 
-export default function(web3) {
+module.exports = function(web3) {
 
 	const mainContract = new web3.eth.Contract(abi, address);
 
