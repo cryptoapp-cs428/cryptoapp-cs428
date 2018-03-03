@@ -1,3 +1,6 @@
+console.warn("The deploy script is currently broken. :( Please make sure your repository is up to date.");
+process.exit(0);
+
 const web3 = require('./web3/rinkeby');
 const { abi, bytecode} = require('./compile');
 
