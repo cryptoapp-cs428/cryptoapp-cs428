@@ -1,4 +1,4 @@
-const web3 = require('../web3-rinkeby-ws.js');
+const web3 = require('../web3/rinkeby-ws');
 const abi = [
 	{
 		"constant": false,

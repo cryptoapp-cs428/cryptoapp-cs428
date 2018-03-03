@@ -1,4 +1,4 @@
-const web3 = require('./web3-rinkeby');
+const web3 = require('./web3/rinkeby');
 const { abi, bytecode} = require('./compile');
 
 const acctIdx = process.env.DEPLOY_ACCT_INDEX
