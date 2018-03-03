@@ -1,20 +1,8 @@
-require('dotenv').load();
-const HDWalletProvider = require('truffle-hdwallet-provider');
-const Web3 = require('web3');
-
-const mnemonic = process.env.DEPLOY_MNEMONIC
-		|| 'various then junior outdoor prosper six column orchard soft town home machine';
-const acctIdx = process.env.DEPLOY_ACCT_INDEX
-		|| 0;
-
+const web3 = require('./web3-rinkeby');
 const { abi, bytecode} = require('./compile');
 
-const provider = new HDWalletProvider(
-	mnemonic,
-	'https://rinkeby.infura.io/6ez8Sc5cp5zniGCMP56R'
-);
-
-const web3 = new Web3(provider);
+const acctIdx = process.env.DEPLOY_ACCT_INDEX
+		|| 0;
 
 (async function() {
 	// Get list of accts
