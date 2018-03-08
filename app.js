@@ -182,14 +182,57 @@ app.post('/animals', (req, res) => {
   console.log('Name: ' + req.body.name);
 
   authenticateRequest(req, res, user => {
-    if (!user) { return res.redirect('/login.html') }
-
     // Store the animal
     models.Animal.create({
       userId: user.id,
       name: req.body.name,
       sourceHash: req.body.sourceHash,
       color: req.body.color
+    }).then(newAnimal => { 
+      return res.status(200).end();
+    }).catch(err => {
+      console.log(err);
+    });
+  });
+});
+
+
+/////////////
+// Battles //
+/////////////
+
+app.get('/battles', (req, res) => {
+  console.log('');
+  console.log('Get Battles..');
+
+  authenticateRequest(req, res, user => {
+    models.Battle.findAll({where: {
+      userEthAddressSource: user.ethAddress
+    }})
+    .then(function(battlesRaw) {
+      // Grab just the date and the count
+      // let animals = animalsRaw.map((animal) => { return {date: animal.date, color: animal.color}});
+      return res.status(200).send(battlesRaw);
+    });
+  });
+});
+
+app.post('/battles', (req, res) => {
+  console.log('');
+  console.log('Post Battles..');
+
+  authenticateRequest(req, res, user => {
+    // Store the animal
+    models.Battle.create({
+      creationTimeUTC: new Date().getTime(),
+      battleTimeUTC: null, // hasn't happened yet
+      sourceWon: null, // did the source shape with the battle?
+      occurred: false, // did the battle happen?
+      userEthAddressSource: user.ethAddress,
+      userEthAddressTarget: req.body.userEthAddressTarget,
+      shapeEthAddressSource: req.body.shapeEthAddressSource,
+      shapeEthAddressTarget: req.body.shapeEthAddressTarget,
+
     }).then(newAnimal => { 
       return res.status(200).end();
     }).catch(err => {
