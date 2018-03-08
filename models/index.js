@@ -14,7 +14,7 @@ let sequelize = new Sequelize(process.env.DB_URL, {
 });
 var db = {};
 
-var modelFiles = ['user.js', 'animal.js', 'battle.js'];
+var modelFiles = ['user.js', 'shape.js', 'battle.js'];
 
 // Load all model files
 modelFiles.forEach(function(file) {
