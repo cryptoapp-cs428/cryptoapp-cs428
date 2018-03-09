@@ -7,11 +7,24 @@ fs.removeSync(buildPath);
 const abisPath = path.resolve(__dirname, 'facades', 'build_abis');
 fs.removeSync(abisPath);
 
-const contractPath = path.resolve(__dirname, 'contracts', 'AnimalBase.sol');
-const src = fs.readFileSync(contractPath, 'utf8');
+const contractsPath = path.resolve(__dirname, 'contracts');
+const files = fs.readdirSync(contractsPath);
 
-console.log("Compiling...");
-const contracts = solc.compile(src, 1).contracts;
+var contracts = {};
+for (let file of files) {
+	try {
+		console.log(`Compiling ${file} ...`);
+		const filePath = path.resolve(contractsPath, file);
+		const src = fs.readFileSync(filePath, 'utf8');
+		const fileContracts = solc.compile(src, 1).contracts;
+		Object.assign(contracts, fileContracts);
+	} catch (err) {
+		console.error(`Could not compile ${file}`, err);
+	}
+}
+
+const contractCount = Object.keys(contracts).length;
+console.log(`Successfully compiled ${contractCount} contracts`);
 
 for (let name in contracts) {
 	if (name.startsWith(':')) {
