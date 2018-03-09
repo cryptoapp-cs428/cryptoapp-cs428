@@ -4,7 +4,7 @@ const solc = require('solc');
 
 const buildPath = path.resolve(__dirname, 'build');
 fs.removeSync(buildPath);
-const abisPath = path.resolve(__dirname, 'client', 'build_abis');
+const abisPath = path.resolve(__dirname, 'facades', 'build_abis');
 fs.removeSync(abisPath);
 
 const contractPath = path.resolve(__dirname, 'contracts', 'AnimalBase.sol');

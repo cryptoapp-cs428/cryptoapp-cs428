@@ -1,4 +1,4 @@
 # Talk to Dan before changing this - we should try to avoid committing built
 # files if possible.
 /build
-/util/build_abis
+/facades/build_abis
