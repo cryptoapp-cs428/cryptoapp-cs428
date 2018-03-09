@@ -371,7 +371,7 @@ app.post('/battles', (req, res) => {
       battleTimeUTC: null, // hasn't happened yet
       sourceWon: null, // did the source shape with the battle?
       occurred: false, // did the battle happen?
-      pendingTargetResponse: false,
+      pendingTargetResponse: true,
       userEthAddressSource: user.ethAddress,
       userEthAddressTarget: req.body.userEthAddressTarget,
       shapeEthAddressSource: req.body.shapeEthAddressSource,
