@@ -2,13 +2,13 @@ const shapeAbi = require('./build_abis/Shape_abi.json');
 
 class Shape {
 	constructor(address) {
-		this.address = address;
+		this.id = address;
 		this.contractPromise = _getContractAt(address);
 	}
 
 	toJSON() {
 		return {
-			address: this.address,
+			id: this.id,
 			// TODO: what else?
 		}
 	}
@@ -17,7 +17,7 @@ class Shape {
 // A utility method for inflating Shape objects from JSON representation
 Shape.fromJSON = function(json) {
 	const shape = new Shape(json.address);
-	Object.assign(shape, json);
+	// TODO: what else?
 	return shape;
 };
 
