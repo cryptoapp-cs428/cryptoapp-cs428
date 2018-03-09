@@ -21,10 +21,10 @@ for (let name in contracts) {
 			contracts[name]
 		);
 		// Output just the ABI, for the client
-		fs.outputFileSync(
+		fs.outputJsonSync(
 			path.resolve(abisPath, name.substring(1) + "_abi.json"),
-			// This parse-then-stringify is to pretty-print the file contents:
-			JSON.stringify(JSON.parse(contracts[name]['interface']), null, 2)
+			JSON.parse(contracts[name]['interface']),
+			{ spaces: '\t' }
 		);
 	}
 }
