@@ -8,8 +8,9 @@ module.exports = function(sequelize, DataTypes) {
             battleTimeUTC: { type: DataTypes.BIGINT, allowNull: true },
             sourceWon: { type: DataTypes.BOOLEAN, allowNull: true },
             occurred: { type: DataTypes.BOOLEAN, allowNull: false },
-            userEthAddressSource: { type: DataTypes.INTEGER, allowNull: false },
-            userEthAddressTarget: { type: DataTypes.INTEGER, allowNull: false },
+            pendingTargetResponse: {type: DataTypes.BOOLEAN, allowNull: false },
+            userEthAddressSource: { type: DataTypes.STRING, allowNull: false },
+            userEthAddressTarget: { type: DataTypes.STRING, allowNull: false },
             shapeEthAddressSource: { type: DataTypes.STRING, allowNull: false },
             shapeEthAddressTarget: { type: DataTypes.STRING, allowNull: false },
         });
