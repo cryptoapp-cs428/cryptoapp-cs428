@@ -42,6 +42,25 @@ const acctIdx = process.env.DEPLOY_ACCT_INDEX
 			gas: '1000000'
 		})
 
-	console.log("Deployed at address:", result.options.address);
+	const deployAddress = result.options.address;
+	const deployInfoPath = path.resolve(__dirname, './deployed_main_contract.json');
+	fs.writeJsonSync(deployInfoPath, {
+		contractName: getContractName(compiledContract),
+		creator: acct,
+		address: deployAddress,
+	}, {
+		spaces: '\t',
+	});
+
+	console.log("Deployed");
 
 })().catch(console.error);
+
+function getContractName(contract) {
+	try {
+		return JSON.parse(contract.metadata).settings.compilationTarget[''];
+	} catch(err) {
+		console.warn("Could not determine name of contract.", err);
+		return "Name Unknown";
+	}
+}
