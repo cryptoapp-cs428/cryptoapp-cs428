@@ -212,22 +212,112 @@ app.get('/logout', (req, res) => {
 });
 
 
-app.get('/animals', (req, res) => {
-  console.log('');
-  console.log('Get Animals..');
+/**
+ * Returns all the shapes owned by the current user
+ */
+app.get('/shapes', (req, res) => {
+   console.log("");
+   console.log('Get Shapes..');
 
-  authenticateRequest(req, res, user => {
-    models.Animal.findAll()
-    // models.Animal.findAll({where: {
-    //   userId: user.id
-    // }})
-    .then(function(animalsRaw) {
-      // Grab just the date and the count
-      // let animals = animalsRaw.map((animal) => { return {date: animal.date, color: animal.color}});
-      return res.status(200).send(animalsRaw);
-    });
-  });
+   authenticateRequest((req, res, user=> {
+       models.Shape.findAll({where: {
+            userEthAddress: user.ethAddress,
+           }})
+           .then(function(shapesRaw) {
+               return res.status(200).send(shapesRaw);
+           })
+   }));
 });
+
+
+/**
+ * Returns all shapes not owned by the current user
+ */
+app.get('/opponents', (req, res) => {
+   console.log("");
+   console.log("Get opponents");
+
+   authenticateRequest((req, res, user => {
+       models.Shape.findAll({where : {
+       [models.Sequelize.Op.not]: [
+           {userEthAddress: user.ethAddress,}
+       ]
+           }})
+           .then(function(opponentsRaw) {
+               return res.status(200).send(opponentsRaw)
+           })
+   }));
+});
+
+/**
+ * Returns all battles that the user has been challenged to, but has not yet accepted or rejected
+ */
+app.get('/battles/challenged', (req, res) => {
+    console.log("");
+    console.log("Get Challenges");
+
+    authenticateRequest((req, res, user => {
+        models.Battle.findAll({where : {
+            [models.Sequelize.Op.and] :
+                [
+                    {userEthAddressTarget: user.ethAddress},
+                    {pendingTargetResponse: true},
+                ],
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
+
+/**
+ * Returns a list of all the battles that the user has challenged other players to, but the opponent has not yet accepted
+ */
+app.get('/battles/pending', (req, res) => {
+    console.log("");
+    console.log("Get Pending Battles");
+
+    authenticateRequest((req, res, user => {
+        models.Battle.findAll({where : {
+                [models.Sequelize.Op.and] :
+                    [
+                        {userEthAddressSource: user.ethAddress},
+                        {pendingTargetResponse: true},
+                    ],
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
+/**
+ * Returns a list of resolved battles the user participated in
+ */
+app.get('/battles/history', (req, res) => {
+    console.log("");
+    console.log("Get Battle History");
+
+    authenticateRequest((req, res, user => {
+
+        models.Battle.findAll({where : {
+                [models.Sequelize.Op.or] :
+                    [
+                        {userEthAddressSource: user.ethAddress},
+                        {userEthAddressSource: user.ethAddress}
+                    ],
+                [models.Sequelize.Op.and] :
+                    [
+                        {pendingTargetResponse: false}
+                    ]
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
 
 app.post('/shapes', (req, res) => {
   console.log('');
@@ -281,6 +371,7 @@ app.post('/battles', (req, res) => {
       battleTimeUTC: null, // hasn't happened yet
       sourceWon: null, // did the source shape with the battle?
       occurred: false, // did the battle happen?
+      pendingTargetResponse: false,
       userEthAddressSource: user.ethAddress,
       userEthAddressTarget: req.body.userEthAddressTarget,
       shapeEthAddressSource: req.body.shapeEthAddressSource,
