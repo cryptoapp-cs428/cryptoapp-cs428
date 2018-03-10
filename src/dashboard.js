@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './dashboard.css';
 import AnimalsList from './AnimalsList';
 import registerServiceWorker from './registerServiceWorker';
-import web3 from './eth/web3.js';
+import web3 from './eth/web3';
 
 //import contract from './eth/animalContract';
 
@@ -31,9 +31,10 @@ import web3 from './eth/web3.js';
 //
 //ReactDOM.render(<AnimalContractInterfacer />, document.getElementById('contract-interface'));
 
-ReactDOM.render(<AnimalsList />, document.getElementById('root-animals-list'));
+// ReactDOM.render(<AnimalsList />, document.getElementById('root-animals-list'));
 registerServiceWorker();
 
+console.log(web3);
 if (!web3) {
 	alert("No injected Web3 was detected. :( You need to be using MetaMask to use this application.");
 }

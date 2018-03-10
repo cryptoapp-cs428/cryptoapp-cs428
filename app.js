@@ -42,6 +42,62 @@ let transporter = nodemailer.createTransport({
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
 
+let compareSignature = (signature, ethAddress, cb) => {
+  // TODO IMPLEMET THIS
+  return (null, true) // (err, authenticated)
+}
+
+
+function createUser(req, res, ethAddress, signature, cb) {
+
+  console.log('createUser..');
+  console.dir(ethAddress);
+  console.dir(signature);
+  
+  // Check if user exists
+  models.User.findAndCountAll({
+      where: { ethAddress: ethAddress }
+  })
+  .then(result => {
+
+    console.log(222);
+
+    if (result.count > 0) { // shouldn't ever get here, but just in case
+      console.log('..address already exists');
+      return cb('ADDRESS_ALREADY_EXISTS');
+    } else {
+
+      console.log(333);
+
+      console.log('..address doesnt exist');
+
+      // Store the user
+      models.User.create({
+        ethAddress: ethAddress,
+        name: null,
+        email: null
+      }).then(function (newUser) {
+
+        console.log(444);
+
+        console.log('..user created');
+
+        // User has logged in
+        let token = jwt.sign({ethAddress: newUser.ethAddress}, process.env.TOKEN_SECRET, {
+          expiresIn: '30d' // expires in x days
+        });
+
+        res.cookie('token', token, {
+          expires : token.expiresIn,
+          httpOnly : false
+        });
+
+        cb(null, newUser);
+      });
+    }
+  });
+}
+
 
 function authenticateRequest(req, res, cb) {
   let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
@@ -49,26 +105,24 @@ function authenticateRequest(req, res, cb) {
   // Check if token exists
   if (!token) {
     console.log('User didnt provide token..');
-    res.redirect('/login.html');
+    res.redirect('/login');
     return;
   }
 
   // Verify it
   jwt.verify(token, process.env.TOKEN_SECRET, function(err, decoded) {      
     if (err) {
-      console.log('Invalid login token..');
-      res.sendFile(path.join(__dirname + '/public/login.html'));
+      console.log('Invalid login..');
+      res.sendFile(path.join(__dirname + '/public/login'));
       return;
     } else {
 
       // Find the user associated with this email
-      models.User.findOne({ where: {email: decoded.email} }).then(user => {
+      models.User.findOne({ where: {ethAddress: decoded.ethAddress} }).then(user => {
         if (!user) {
           // invalid user login
           console.log('Invalid login email..');
-          return res.redirect('/login.html');
-        } else if (!user.verified) {
-          return res.redirect('/verify.html');
+          return res.redirect('/login');
         } else {
           cb(user);
         }
@@ -90,12 +144,8 @@ app.get('/elements', function (req, res) {
   res.sendFile(path.join(__dirname + '/build/elements.html'));
 });
 
-app.get('/verify', function (req, res) {
-  console.log('verify...')
-  res.sendFile(path.join(__dirname + '/build/verify.html'));
-});
-
 app.get('/dashboard', function (req, res) {
+  console.log('tried to get dash..');
   authenticateRequest(req, res, user => {
     res.sendFile(path.join(__dirname + '/build/dashboard.html'));
   });
@@ -114,38 +164,41 @@ app.post('/login', (req, res) => {
   console.log('login tried..');
   console.dir(req.body);
 
-  // search for attributes
-  models.User.findOne({ where: {email: req.body.email} }).then(user => {
+  // If invalid input
+  if (req.body.ethAddress === undefined || req.body.ethAddress === "" ||
+      req.body.signature === undefined || req.body.signature === "" ) {
+    return res.json({success: false, reason: 'invalid ethAddress'});
+  }
+
+  // search for same eth address
+  models.User.findOne({ where: {ethAddress: req.body.ethAddress} }).then(user => {
 
     // If email doesn't exist
     if (!user) {
-      res.status(401).json({ error: 'email doesnt exist'});
-      return;
-    } 
-
-    console.log('password hash:');
-    console.log(user.passwordHash);
-
-    // Check their password with our stored hash
-    bcrypt.compare(req.body.password, user.passwordHash, function(err, authenticated) {
-      // Invalid password
-      if (!authenticated) {
-        return res.status(401).json({ error: 'invalid password'});
-      }
-
-      // User has logged in
-      let token = jwt.sign({email: user.email}, process.env.TOKEN_SECRET, {
-        expiresIn: '30d' // expires in x days
+      // Create a new user
+      user = createUser(req, res, req.body.ethAddress, req.body.signature, (err, newUser) => {
+        return res.redirect('/dashboard.html');
       });
 
-      // Set their cookie
-      res.cookie('token', token, {
-        expires: token.expiresIn,
-        httpOnly: false
-      });
+    } else {
+      compareSignature(req.body.signature, user.ethAddress, (err, authenticated) => {
+        // Invalid address signature pair
+        if (!authenticated) { return res.status(401).json({ error: 'invalid password'}); }
 
-      return res.redirect('/dashboard.html');
-    });
+        // User has logged in
+        let token = jwt.sign({email: user.ethAddress}, process.env.TOKEN_SECRET, {
+          expiresIn: '30d' // expires in x days
+        });
+
+        // Set their cookie
+        res.cookie('token', token, {
+          expires: token.expiresIn,
+          httpOnly: false
+        });
+
+        return res.status(200).redirect('/dashboard');
+      });
+    }
   });
 });
 
@@ -159,37 +212,170 @@ app.get('/logout', (req, res) => {
 });
 
 
-app.get('/animals', (req, res) => {
+/**
+ * Returns all the shapes owned by the current user
+ */
+app.get('/shapes', (req, res) => {
+   console.log("");
+   console.log('Get Shapes..');
+
+   authenticateRequest((req, res, user=> {
+       models.Shape.findAll({where: {
+            userEthAddress: user.ethAddress,
+           }})
+           .then(function(shapesRaw) {
+               return res.status(200).send(shapesRaw);
+           })
+   }));
+});
+
+
+/**
+ * Returns all shapes not owned by the current user
+ */
+app.get('/opponents', (req, res) => {
+   console.log("");
+   console.log("Get opponents");
+
+   authenticateRequest((req, res, user => {
+       models.Shape.findAll({where : {
+       [models.Sequelize.Op.not]: [
+           {userEthAddress: user.ethAddress,}
+       ]
+           }})
+           .then(function(opponentsRaw) {
+               return res.status(200).send(opponentsRaw)
+           })
+   }));
+});
+
+/**
+ * Returns all battles that the user has been challenged to, but has not yet accepted or rejected
+ */
+app.get('/battles/challenged', (req, res) => {
+    console.log("");
+    console.log("Get Challenges");
+
+    authenticateRequest((req, res, user => {
+        models.Battle.findAll({where : {
+            [models.Sequelize.Op.and] :
+                [
+                    {userEthAddressTarget: user.ethAddress},
+                    {pendingTargetResponse: true},
+                ],
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
+
+/**
+ * Returns a list of all the battles that the user has challenged other players to, but the opponent has not yet accepted
+ */
+app.get('/battles/pending', (req, res) => {
+    console.log("");
+    console.log("Get Pending Battles");
+
+    authenticateRequest((req, res, user => {
+        models.Battle.findAll({where : {
+                [models.Sequelize.Op.and] :
+                    [
+                        {userEthAddressSource: user.ethAddress},
+                        {pendingTargetResponse: true},
+                    ],
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
+/**
+ * Returns a list of resolved battles the user participated in
+ */
+app.get('/battles/history', (req, res) => {
+    console.log("");
+    console.log("Get Battle History");
+
+    authenticateRequest((req, res, user => {
+
+        models.Battle.findAll({where : {
+                [models.Sequelize.Op.or] :
+                    [
+                        {userEthAddressSource: user.ethAddress},
+                        {userEthAddressSource: user.ethAddress}
+                    ],
+                [models.Sequelize.Op.and] :
+                    [
+                        {pendingTargetResponse: false}
+                    ]
+            }})
+            .then(function(battlesRaw) {
+                return res.status(200).send(battlesRaw)
+            })
+    }));
+});
+
+
+app.post('/shapes', (req, res) => {
   console.log('');
-  console.log('Get Animals..');
+  console.log('Post Shapes..');
+  console.dir(req.body);
 
   authenticateRequest(req, res, user => {
-    models.Animal.findAll()
-    // models.Animal.findAll({where: {
-    //   userId: user.id
-    // }})
-    .then(function(animalsRaw) {
-      // Grab just the date and the count
-      // let animals = animalsRaw.map((animal) => { return {date: animal.date, color: animal.color}});
-      return res.status(200).send(animalsRaw);
+    // Store the animal
+    models.Shape.create({
+      ethAddress: req.body.ethAddress,
+      userEthAddress: user.ethAddress,
+      color: req.body.color,
+      experience: req.body.experience,
+      level: req.body.level
+    }).then(newShape => { 
+      return res.status(200).end();
+    }).catch(err => {
+      console.log(err);
     });
   });
 });
 
-app.post('/animals', (req, res) => {
+
+/////////////
+// Battles //
+/////////////
+
+app.get('/battles', (req, res) => {
   console.log('');
-  console.log('Post Animals..');
-  console.log('Name: ' + req.body.name);
+  console.log('Get Battles..');
 
   authenticateRequest(req, res, user => {
-    if (!user) { return res.redirect('/login.html') }
+    models.Battle.findAll({where: {
+      userEthAddressSource: user.ethAddress
+    }})
+    .then(function(battlesRaw) {
+      return res.status(200).send(battlesRaw);
+    });
+  });
+});
 
+// Create a new battle
+app.post('/battles', (req, res) => {
+  console.log('');
+  console.log('Post Battles..');
+
+  authenticateRequest(req, res, user => {
     // Store the animal
-    models.Animal.create({
-      userId: user.id,
-      name: req.body.name,
-      sourceHash: req.body.sourceHash,
-      color: req.body.color
+    models.Battle.create({
+      creationTimeUTC: new Date().getTime(),
+      battleTimeUTC: null, // hasn't happened yet
+      sourceWon: null, // did the source shape with the battle?
+      occurred: false, // did the battle happen?
+      pendingTargetResponse: false,
+      userEthAddressSource: user.ethAddress,
+      userEthAddressTarget: req.body.userEthAddressTarget,
+      shapeEthAddressSource: req.body.shapeEthAddressSource,
+      shapeEthAddressTarget: req.body.shapeEthAddressTarget,
     }).then(newAnimal => { 
       return res.status(200).end();
     }).catch(err => {
@@ -202,129 +388,6 @@ app.post('/animals', (req, res) => {
 ///////////
 // Users //
 ///////////
-
-function createUser(req, res, email, password, cb) {
-
-  console.log('createUser..');
-  
-  // Check if user exists
-  models.User.findAndCountAll({
-      where: { email: email }
-  })
-  .then(result => {
-
-    if (result.count > 0) {
-      console.log('..email already exists');
-      return res.status(400).json({success: false, reason: 'EMAIL_ALREADY_EXISTS'});;
-    } else {
-
-      console.log('..email doesnt exist');
-
-      // Salt and hash their password
-      bcrypt.hash(password, saltRounds, (err, passwordHash) => {
-        console.log('..password hashed');
-
-        let verifyCode = Math.floor(Math.random() * 900 + 1000) + '';
-        console.log('verify code: ' + verifyCode);
-
-        // Send an email
-        let emailOptions = {
-          from: 'Email Verification <' + process.env.EMAIL_USER + '>',
-          to: email,
-          subject: 'Please confirm your Email account -- Crypto App',
-          html: `<html><p>Hello,<br> Please enter this code ${verifyCode} to verify your email.</p></html>`,
-          text: `Please enter this code ${verifyCode} to verify your email.`
-        };
-        // html: `<p>Hello,<br> Please <a href=${verifyCode}>click here</a> to verify your email.</p><br/>
-                 // or enter this code ${verifyCode}`,
-        transporter.sendMail(emailOptions, function(error, info){
-          if (error) {
-            console.log('Error: ' + error);
-          } else {
-            console.log('Message sent: ' + info.response);
-          }
-        });
-
-        // Store the user
-        models.User.create({
-            email: email,
-            passwordHash: passwordHash,
-            verified: false,
-            verifyCode: verifyCode,
-            color: '#2c3e50' // random default color
-        }).then(function (newUser) {
-
-          console.log('..user created');
-
-          // User has logged in
-          let token = jwt.sign({email: newUser.email}, process.env.TOKEN_SECRET, {
-            expiresIn: '1d' // expires in 24 hours
-          });
-
-          res.cookie('token', token, {
-            expires : token.expiresIn,
-            httpOnly : false
-          });
-
-          cb(newUser);
-        });
-      });
-    }
-  });
-}
-
-
-app.post('/verify',function(req,res){
-  console.log('');
-  console.log('Verify user..');
-
-  models.User.findOne({ where: {verifyCode: req.body.code} }).then(user => {
-    if (!user) {
-      console.log('Invalid verify code..');
-      return res.status(400).json({error: 'Invalid verify code'});
-    } 
-    // Update the user
-    user.updateAttributes({verified: true}).then(function (updatedUser) {
-
-      // Set the user cookie
-      let token = jwt.sign({email: user.email, password: user.password}, process.env.TOKEN_SECRET, {
-        expiresIn: '30d' // expires in 24 hours
-      });
-      res.cookie('token', token, {
-        expires : token.expiresIn,
-        httpOnly : false
-      });
-
-      res.redirect('/dashboard.html');
-    });
-  });
-});
-
-
-// Called by sign up page
-app.post('/join', async (req, res) => {
-
-  console.log('');
-  console.log('New User..');
-
-  let email = req.body.email;
-  let password = req.body.password;
-
-  // Validate email and password (maybe do some extra sterilizing here..)
-  if (email === '' || email === undefined) {
-    return res.status(400).json({success: false, error: 'Invalid email.'});
-  }
-  if (password === '' || password === undefined) {
-    return res.status(400).json({success: false, error: 'Invalid password.'});
-  }
-
-  // Create and store User
-  createUser(req, res, email, password, (newUser) => {
-    console.log('User added: ' + newUser.email);
-    console.log('redirect..');
-    return res.redirect('/verify.html');
-  });
-});
 
 
 // GET User
