@@ -1,0 +1,1 @@
+../../solidity/facades/frontend.js
