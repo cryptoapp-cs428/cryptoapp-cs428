@@ -15,56 +15,17 @@
 
         }).then(function(response) {
           return response.json();
-
         }).then(function(json) {
           console.log(json);
 
-          let idElement = document.querySelector('#user-id');
-          idElement.textContent = json.id;
-
-          let colorElement = document.querySelector('#user-color');
-          colorElement.style.backgroundColor = json.color;
+          let ethAddrElement = document.querySelector('#user-eth-address');
+          ethAddrElement.textContent = json.ethAddress;
 
           let emailElement = document.querySelector('#user-email');
           emailElement.textContent = json.email;
 
-        }).catch(function(err) {
-          console.log(err);
-        });
-      }
-
-
-      let renderAnimals = (animals) => {
-        let listAnimalsElement = document.querySelector('#list-animals');
-
-        let rows = '';
-        animals.forEach(animal => {
-          rows += `
-          <tr>
-            <td><b class="animal-owner">`+animal.userId+`</b></td>
-            <td><b class="animal-name">`+animal.name+`</b></td>
-            <td style="background-color:`+animal.color+`"><b class="animal-color"></b></td>
-          </tr>`;
-        });
-
-        listAnimalsElement.innerHTML = rows;
-      }
-
-      let loadAnimals = () => {
-        console.log('loadAnimals..');
-
-        fetch('animals', {
-          method: 'get',
-          credentials: 'include',
-
-        }).then(function(response) {
-          return response.json();
-
-        }).then(function(json) {
-          console.log('animals:');
-          console.dir(json);
-
-          renderAnimals(json);
+          let nameElement = document.querySelector('#user-name');
+          nameElement.textContent = json.name;
 
         }).catch(function(err) {
           console.log(err);
@@ -111,19 +72,21 @@
         });
       }
 
-      let addAnimal = () => {
-        console.log('addAnimal..')
+      let addShape = () => {
+        console.log('addShape..');
 
-        let newAnimalNameElement = document.querySelector('#new-animal-name');
-        let newAnimalName = newAnimalNameElement.value;
+        let ethAddress = getRandomHash();
+        let color = getRandomColor();
+        let experience = 0;
+        let level = 0;
 
         let body = {
-          name: newAnimalName,
-          sourceHash: getRandomColor(),
-          color: getRandomColor(),
+          ethAddress: shapeEthAddress,
+          color: shapeColor,
+          sides: shapeSides
         }
 
-        fetch('animals', {
+        fetch('shapes', {
           method: 'post',
           credentials: 'include',
           headers: {
@@ -132,7 +95,7 @@
           },
           body: JSON.stringify(body)
         }).then(function(response) {
-          loadAnimals(); // Reload animals
+          alert('Shape added..');
 
         }).catch(function(err) {
           console.log(err);
@@ -142,5 +105,4 @@
       // Run on startup
       window.onload = () => { 
         loadUserData() 
-        loadAnimals() 
-      }</script><link href="https://cryptoapp-cs428.herokuapp.com/static/css/dashboard.d41d8cd9.css" rel="stylesheet"></head><body><div id="wrapper"><header id="header"><h1>Member Dashboard</h1><p>Buy Some Puppies to Get Started</p></header><div id="main"><section id="content" class="main"><hr/><h1>User Info</h1><div class="table-wrapper"><table class="alt"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><b>ID</b></td><td><b id="user-id"></b></td></tr><tr><td><b>Email</b></td><td><b id="user-email"></b></td></tr><tr><td><b>Color</b></td><td id="user-color"></td></tr></tbody></table></div><h3>Actions</h3><ul class="actions"><li><a class="button special" onclick="changeColor()">Generate New Color</a></li></ul><hr/><h1>Animals JS</h1><div class="table-wrapper"><table class="alt"><thead><tr><th>Owner</th><th>Name</th><th>Color</th></tr></thead><tbody id="list-animals"><tr><td><b id="animal-owner">_</b></td><td><b id="animal-name">_</b></td><td><b id="animal-color">_</b></td></tr></tbody></table></div><h1>Animals REACT</h1><div class="table-wrapper"><table class="alt"><thead><tr><th>Owner</th><th>Name</th><th>Color</th></tr></thead><tbody id="root-animals-list"></tbody></table></div><h3>Actions</h3><ul class="actions"><li><input name="new-animal-name" id="new-animal-name" placeholder="Animal Name"/></li><li><a class="button special" onclick="addAnimal()">Create New Animal</a></li></ul><hr/><ul class="actions"><li><a class="button special" onclick="logOut()">Log Out</a></li></ul></section></div><footer id="footer"><p class="copyright">&copy; Crypto App. Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>.</p></footer></div><script src="assets/js/jquery.min.js"></script><script src="assets/js/jquery.scrollex.min.js"></script><script src="assets/js/jquery.scrolly.min.js"></script><script src="assets/js/skel.min.js"></script><script src="assets/js/util.js"></script><!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]--><script src="assets/js/main.js"></script><script type="text/javascript" src="https://cryptoapp-cs428.herokuapp.com/static/js/dashboard.15fd77cb.js"></script></body></html>
+      }</script><link href="https://cryptoapp-cs428.herokuapp.com/static/css/dashboard.d41d8cd9.css" rel="stylesheet"></head><body><div id="wrapper"><header id="header"><h1>Member Dashboard</h1><p>Buy Some Shapes to Get Started</p></header><div id="main"><section id="content" class="main"><hr/><h1>User Info</h1><div class="table-wrapper"><table class="alt"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody><tr><td><b>Eth Address</b></td><td><b id="user-eth-address"></b></td></tr><tr><td><b>Email</b></td><td><b id="user-email"></b></td></tr><tr><td><b>Name</b></td><td id="user-name"></td></tr></tbody></table></div><h3>Actions</h3><hr/><h1>Animals REACT</h1><div class="table-wrapper"><table class="alt"><thead><tr><th>Owner</th><th>Name</th><th>Color</th></tr></thead><tbody id="root-animals-list"></tbody><div id="contract-interface"></div></table></div><h3>Actions</h3><ul class="actions"><li><input name="new-shape-name" id="new-shape-name" placeholder="Shape Info Goes Here"/></li><li><a class="button special" onclick="addAnimal()">Create New Animal</a></li></ul><hr/><ul class="actions"><li><a class="button special" onclick="logOut()">Log Out</a></li></ul></section></div><footer id="footer"><p class="copyright">&copy; Crypto App. Design: <a href="https://html5up.net" target="_blank">HTML5 UP</a>.</p></footer></div><script src="assets/js/jquery.min.js"></script><script src="assets/js/jquery.scrollex.min.js"></script><script src="assets/js/jquery.scrolly.min.js"></script><script src="assets/js/skel.min.js"></script><script src="assets/js/util.js"></script><!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]--><script src="assets/js/main.js"></script><script type="text/javascript" src="https://cryptoapp-cs428.herokuapp.com/static/js/dashboard.ae791202.js"></script></body></html>
