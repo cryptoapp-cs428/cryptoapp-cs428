@@ -17,7 +17,17 @@ module.exports = function(web3) {
 				? Promise.resolve(web3.eth.defaultAccount)
 				:	web3.eth.getAccounts().then(function(accounts) {
 					return accounts[0];
-				})
+				});
+		},
+		personalSign: function(message, fromAddress, callback) {
+			// The web3.eth.sign method is broken for version 1.0.0 so
+			// here we use a workaround
+			var parms = [message, fromAddress];
+			return web3.currentProvider.sendAsync({
+				method: 'personal_sign',
+				params: parms,
+				from: fromAddress
+			}, callback);
 		},
 		getAnimalCount: function() {
 			return Promise.resolve(0);
