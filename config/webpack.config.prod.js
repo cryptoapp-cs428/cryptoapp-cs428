@@ -259,7 +259,6 @@ module.exports = {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeRedundantAttributes: true,
         useShortDoctype: true,
         removeEmptyAttributes: true,
         removeStyleLinkTypeAttributes: true,
@@ -277,7 +276,6 @@ module.exports = {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeRedundantAttributes: true,
         useShortDoctype: true,
         removeEmptyAttributes: true,
         removeStyleLinkTypeAttributes: true,
