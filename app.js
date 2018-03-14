@@ -204,7 +204,7 @@ app.post('/login', (req, res) => {
         } else {
             compareSignature(req.body.signature, user.ethAddress, (err, authenticated) => {
                 // Invalid address signature pair
-                if (!authenticated) { return res.status(401).json({ error: 'invalid password' }); }
+                if (!authenticated) { return res.status(401).json({ error: 'metamask auth failed' }); }
 
                 // User has logged in
                 let token = jwt.sign({ email: user.ethAddress }, process.env.TOKEN_SECRET, {
