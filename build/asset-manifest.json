@@ -1,6 +1,8 @@
 {
   "dashboard.css": "static/css/dashboard.d41d8cd9.css",
   "dashboard.css.map": "static/css/dashboard.d41d8cd9.css.map",
-  "dashboard.js": "static/js/dashboard.ae791202.js",
-  "dashboard.js.map": "static/js/dashboard.ae791202.js.map"
+  "dashboard.js": "static/js/dashboard.b77c8f13.js",
+  "dashboard.js.map": "static/js/dashboard.b77c8f13.js.map",
+  "login.js": "static/js/login.2b9c398a.js",
+  "login.js.map": "static/js/login.2b9c398a.js.map"
 }

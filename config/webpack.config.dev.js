@@ -38,6 +38,12 @@ module.exports = {
       require.resolve('./polyfills'),
       require.resolve('react-error-overlay'),
       paths.appSrc + "/dashboard.js",
+    ],
+    login: [
+      require.resolve('react-dev-utils/webpackHotDevClient'),
+      require.resolve('./polyfills'),
+      require.resolve('react-error-overlay'),
+      paths.appSrc + "/login.js",
     ]
   },
   output: {
@@ -199,6 +205,12 @@ module.exports = {
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     // In development, this will be an empty string.
     new InterpolateHtmlPlugin(env.raw),
+    new HtmlWebpackPlugin({
+      inject: true,
+      chunks: ["login"], // maps to an 'entry' name
+      template: paths.appPublic + '/login.html', //paths.appHtml,
+      filename: 'login.html',
+    }),
     new HtmlWebpackPlugin({
       inject: true,
       chunks: ["dashboard"], // maps to an 'entry' name
