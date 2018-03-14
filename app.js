@@ -127,8 +127,7 @@ const authenticateRequest = (req, res, cb) => {
     // Check if token exists
     if (!token) {
         console.log('User didnt provide token..');
-        res.redirect('/login');
-        return;
+        return res.redirect('/login');
     }
 
     // Verify it
