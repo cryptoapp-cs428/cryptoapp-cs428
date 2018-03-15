@@ -60,6 +60,10 @@ module.exports = {
     dashboard: [
       require.resolve('./polyfills'),
       paths.appSrc + "/dashboard.js",
+    ],
+    login: [
+      require.resolve('./polyfills'),
+      paths.appSrc + "/login.js",
     ]
   },
   output: {
@@ -249,13 +253,29 @@ module.exports = {
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
+      chunks: ["login"],
+      template: paths.appPublic + '/login.html',
+      filename: 'login.html',
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      },
+    }),
+    new HtmlWebpackPlugin({
+      inject: true,
       chunks: ["dashboard"],
       template: paths.appPublic + '/dashboard.html',
       filename: 'dashboard.html',
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeRedundantAttributes: true,
         useShortDoctype: true,
         removeEmptyAttributes: true,
         removeStyleLinkTypeAttributes: true,

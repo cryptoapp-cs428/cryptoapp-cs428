@@ -3,7 +3,7 @@
 // Battles have a source shape that wants to battle the target shape
 module.exports = function(sequelize, DataTypes) {
     var Battle = sequelize.define("Battle", {
-            id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+            _: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
             creationTimeUTC: { type: DataTypes.BIGINT, allowNull: false },
             battleTimeUTC: { type: DataTypes.BIGINT, allowNull: true },
             sourceWon: { type: DataTypes.BOOLEAN, allowNull: true },
