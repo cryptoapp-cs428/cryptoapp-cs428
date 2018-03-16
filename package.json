@@ -70,7 +70,8 @@
     "solidity:deploy": "node solidity/deploy.js",
     "test": "node scripts/test.js --env=jsdom",
     "client": "node scripts/start.js",
-    "server": "node app.js"
+    "server": "node app.js",
+    "postinstall": "node solidity/compile.js && node scripts/build.js"
   },
   "jest": {
     "collectCoverageFrom": [
