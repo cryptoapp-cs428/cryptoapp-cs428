@@ -29,6 +29,13 @@ const shapes = mockData.shapes.map(Shape.fromJSON);
 	solidityAPI.on("shapeAdded", function(shapeAddress, ownerAddress) {
 		// Called by the API whenever a shape is added.
 	})
+
+"shapeAdded"        has args (shapeAddress, owner);
+"challengePosted"   has args (sourceShape, targetShape);
+"challengeResolved" has args (sourceShape, targetShape, sourceWon);
+"challengeRejected" has args (sourceShape, targetShape);
+"randomPosted"      has args (shapeAddress);
+"randomResolved"    has args (winnerShapeAddress, loserShapeAddress);
 */
 function on(eventKey, callback) {
 	switch eventKey {
