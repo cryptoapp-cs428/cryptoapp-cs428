@@ -31,7 +31,7 @@ const shapes = mockData.shapes.map(Shape.fromJSON);
 	})
 */
 function on(eventKey, callback) {
-	switch eventKey {
+	switch (eventKey) {
 		case "shapeAdded":
 			eventShapeAdded.watch(function(error, result) {
 				if (!error) {
