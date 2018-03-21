@@ -18,8 +18,6 @@ for (let file of files) {
 		const src = fs.readFileSync(filePath, 'utf8');
 		const fileContracts = solc.compile(src, 1).contracts;
 		Object.assign(contracts, fileContracts);
-		console.log(`Compiled ${file}`);
-		console.log(Object.keys(fileContracts));
 	} catch (err) {
 		console.error(`Could not compile ${file}`, err);
 	}
@@ -27,7 +25,6 @@ for (let file of files) {
 
 const contractCount = Object.keys(contracts).length;
 console.log(`Successfully compiled ${contractCount} contracts`);
-console.log(Object.keys(contracts));
 
 for (let name in contracts) {
 	if (name.startsWith(':')) {
