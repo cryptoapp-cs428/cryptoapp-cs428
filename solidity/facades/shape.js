@@ -1,4 +1,4 @@
-const shapeAbi = require('./build_abis/Shape_abi.json');
+const shapeAbi = require('./build_abis/CryptoShape_abi.json');
 
 class Shape {
 	constructor(address) {

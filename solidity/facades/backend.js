@@ -1,5 +1,5 @@
 const { address } = require('../deployed_main_contract.json');
-const mainABI = require('./build_abis/Main_abi.json');
+const mainABI = require('../build/CryptoShape_full.json');
 const mockData = require('./_mockData.json');
 const Shape = require('./shape');
 
@@ -38,7 +38,7 @@ const shapes = mockData.shapes.map(Shape.fromJSON);
 "randomResolved"    has args (winnerShapeAddress, loserShapeAddress);
 */
 function on(eventKey, callback) {
-	switch eventKey {
+	switch (eventKey) {
 		case "shapeAdded":
 			eventShapeAdded.watch(function(error, result) {
 				if (!error) {

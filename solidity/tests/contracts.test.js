@@ -1,7 +1,7 @@
 const assert = require('assert');
 const web3 = require('../web3/ganache');
 
-const Main = require('../build/Main_full.json');
+const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
 
@@ -15,7 +15,7 @@ beforeEach(async () => {
 
 		sendOpts = {
 			from: accts[0],
-			gas: '1000000'
+			gas: '3000000'
 		};
 
 		// Use acct to deploy contract
