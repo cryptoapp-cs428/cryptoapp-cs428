@@ -7,6 +7,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const solidityAPI = require('./solidity/facades/backend');
+
 const jwt = require('jsonwebtoken'); // used for auth tokens
 const cookieParser = require('cookie-parser');
 
@@ -400,11 +402,12 @@ app.post('/battles', (req, res) => {
             battleTimeUTC: null, // hasn't happened yet
             sourceWon: null, // did the source shape with the battle?
             occurred: false, // did the battle happen?
-            pendingTargetResponse: false,
+            pendingTargetResponse: true, // are we waiting for the other player to accept/reject?
             userEthAddressSource: user.ethAddress,
             userEthAddressTarget: req.body.userEthAddressTarget,
             shapeEthAddressSource: req.body.shapeEthAddressSource,
             shapeEthAddressTarget: req.body.shapeEthAddressTarget,
+            random: false
         }).then(newAnimal => {
             return res.status(200).end();
         }).catch(err => {
@@ -441,6 +444,242 @@ app.post('/user-stats', (req, res) => {
     });
 });
 
+
+
+////////////////////////
+// Solidity Listeners //
+////////////////////////
+
+
+solidityAPI.on("shapeAdded" , async (shapeAddress, ownerAddress) => {
+    /**
+     * Update our database by getting the shape info from the blockchain and
+     * entering in all the info into our database.
+     * We make a new shape
+     */
+
+    const shapeData = await shapeContractData(shapeAddress);
+
+    models.Shape.create({
+        ethAddress: shapeData.address,
+        userEthAddress: ownerAddress,
+        color: shapeData.color,
+        experience: shapeData.experience,
+        level: shapeData.level
+    }).then(newShape => {
+        //
+    }).catch(err => {
+        console.log(err);
+    });
+
+});
+
+solidityAPI.on("challengePosted" , async (sourceShape, targetShape) => {
+    /**
+     * create a new battle object that will represent the challenge
+     * We will need to lookup who the other two shapes are owned by to get
+     * all the info we need to make the battle object
+     */
+
+    models.Shape.findAll({
+        where: {
+            [models.Sequelize.Op.or]: [
+                { ethAddress: sourceShape },
+                { ethAddress: targetShape }
+            ]
+        }})
+        .then(function(shapesRaw) {
+            let sourceModel;
+            let targetModel;
+
+            // We get both shapes with the same transaction to simplify things
+            if (shapesRaw.length !== 2) {
+                console.log("Too many shapes returned");
+                return;
+            }
+            else {
+                if (shapesRaw[0].ethAddress === sourceShape) {
+                    sourceModel = shapesRaw[0];
+                    targetModel = shapesRaw[1];
+                }
+                else {
+                    sourceModel = shapesRaw[1];
+                    targetModel = shapesRaw[0];
+                }
+            }
+
+            models.Battle.create({
+                creationTimeUTC: new Date().getTime(),
+                battleTimeUTC: null, // hasn't happened yet
+                sourceWon: null, // did the source shape with the battle?
+                occurred: false, // did the battle happen?
+                pendingTargetResponse: true, // are we waiting for the other player to accept/reject?
+                userEthAddressSource: sourceModel.userEthAddress,
+                userEthAddressTarget: targetModel.userEthAddress,
+                shapeEthAddressSource: sourceModel.ethAddress,
+                shapeEthAddressTarget: targetModel.ethAddress,
+                random: false
+            }).then(() => {
+                //
+            }).catch(err => {
+                console.log(err);
+            });
+
+        })
+});
+
+solidityAPI.on("challengeResolved" , async (sourceShape, targetShape, sourceWon) => {
+    /**
+     * Update the battle object that represented challenge between the two shapes
+     * The battle is now over and a winner has been chosen.
+     *
+     * The shapes after battling will have had their experience and level updated,
+     * the entries in our database will need to be updated to reflect the blockchain.
+     */
+
+
+    models.Battle.find({
+        shapeEthAddressSource: sourceShape,
+        shapeEthAddressTarget: targetShape,
+    }).then(function(battle) {
+        battle.sourceWon = sourceWon;
+        battle.occurred = true;
+        battle.pendingTargetResponse = false;
+        battle.TimeUTC = new Date().getTime();
+
+        battle.save().then(() => {}).catch(err => {
+            console.log(err);
+        })
+    });
+
+
+    updateShapeFromBC(sourceShape).catch(err => console.log(err));
+    updateShapeFromBC(targetShape).catch(err => console.log(err));
+
+});
+
+solidityAPI.on("challengeRejected" , (sourceShape, targetShape) => {
+    /**
+     * Update the battle object
+     * The battle is no longer pending and the battle did not happen.
+     */
+
+    models.Battle.find({
+        shapeEthAddressSource: sourceShape,
+        shapeEthAddressTarget: targetShape,
+    }).then(function(battle) {
+        battle.occurred = false;
+        battle.pendingTargetResponse = false;
+        battle.TimeUTC = new Date().getTime(); // Battle didn't happen, but we save when it was rejected
+
+        battle.save().catch(err => {
+            console.log(err);
+        })
+    });
+
+});
+
+solidityAPI.on("randomPosted" , (shapeAddress) => {
+    /**
+     * Update the shape to show that it is seeking a random battle
+     */
+
+    models.Shape.find({
+        ethAddress: shapeAddress
+    }).then(shape => {
+        shape.seekingRandom = true;
+
+        shape.save().catch(err => {
+            console.log(err);
+        })
+
+    }).catch(err => console.log(err));
+
+});
+
+solidityAPI.on("randomResolved" , async (winnerShapeAddress, loserShapeAddress) => {
+    /**
+     * Create a new battle object to record the random battle that occurred
+     * Update both shapes data in our database to reflect blockchain updates
+     */
+
+
+    const bcWinnerShapeData = await shapeContractData(winnerShapeAddress);
+    const bcLoserShapeData = await shapeContractData(loserShapeAddress);
+
+    models.Battle.create({
+        creationTimeUTC: new Date().getTime(),
+        battleTimeUTC: new Date().getTime(),
+        sourceWon: true, // For random battles the winner will be the source
+        occurred: true,
+        pendingTargetResponse: false,
+        userEthAddressSource: bcWinnerShapeData.owner,
+        userEthAddressTarget: bcWinnerShapeData.address,
+        shapeEthAddressSource: bcLoserShapeData.owner,
+        shapeEthAddressTarget: bcLoserShapeData.address,
+        random: true
+    }).catch(err => {
+        console.log(err);
+    });
+
+    updateShapeFromBC(winnerShapeAddress).catch(err => { console.log(err); });
+    updateShapeFromBC(loserShapeAddress).catch(err =>  { console.log(err); });
+
+});
+
+
+// Todo: This interface needs to be the actual shape interface!
+const shapeInterface = {};
+
+async function shapeContractData(address) {
+    let shapeData = {address: address};
+    let colorInt;
+
+    const shapeContract = await new solidityAPI.useWeb3.eth.Contract(shapeInterface, address);
+
+    // See https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
+    // These need to line up from top to bottom!
+    [
+        shapeData.owner,
+        shapeData.level,
+        shapeData.experience,
+        shapeData.seekingRandom,
+        colorInt
+    ] = await Promise.all([
+        shapeContract.methods.owner().call(),
+        shapeContract.methods.level().call(),
+        shapeContract.methods.experience().call(),
+        shapeContract.methods.awaitingRandomFight().call(),
+        shapeContract.methods.rgbColor().call()
+    ]);
+
+    shapeData.color = colorInt.toString(16);
+
+    return shapeData;
+}
+
+async function updateShapeFromBC(shapeAddress) {
+
+    const bcShapeData = await shapeContractData(shapeAddress);
+
+
+    models.Shape.find({
+        ethAddress: shapeAddress
+    }).then((shape) => {
+        shape.experience = bcShapeData.experience;
+        shape.level = bcShapeData.level;
+        shape.color = bcShapeData.color;
+        shape.seekingRandom = bcShapeData.seekingRandom;
+
+        shape.save().then( () => {}).catch(err => {
+            console.log(err);
+        });
+
+    }).catch(err => {
+        console.log(err);
+    })
+
+}
 
 /////////////
 // Helpers //

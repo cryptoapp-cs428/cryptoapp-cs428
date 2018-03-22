@@ -4,7 +4,7 @@
  */
 
 const address = require('../deployed_main_contract.json').address;
-const abi = require('./build_abis/Main_abi.json');
+const abi = require('./build_abis/CryptoShapeMain_abi.json');
 
 module.exports = function(web3) {
 

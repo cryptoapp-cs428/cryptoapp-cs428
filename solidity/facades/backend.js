@@ -1,5 +1,5 @@
 const { address } = require('../deployed_main_contract.json');
-const mainABI = require('./build_abis/Main_abi.json');
+const mainABI = require('../build/CryptoShape_full.json');
 const mockData = require('./_mockData.json');
 const Shape = require('./shape');
 
@@ -25,6 +25,35 @@ function getEvents() {
 
 const shapes = mockData.shapes.map(Shape.fromJSON);
 
+/* Do something like this to make the backend Shape API (from app.js)
+async function shapeContractData(address) {
+    let shapeData = {address: address};
+    let colorInt;
+
+    const shapeContract = await new solidityAPI.useWeb3.eth.Contract(shapeInterface, address);
+
+    // See https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
+    // These need to line up from top to bottom!
+    [
+        shapeData.owner,
+        shapeData.level,
+        shapeData.experience,
+        shapeData.seekingRandom,
+        colorInt
+    ] = await Promise.all([
+        shapeContract.methods.owner().call(),
+        shapeContract.methods.level().call(),
+        shapeContract.methods.experience().call(),
+        shapeContract.methods.awaitingRandomFight().call(),
+        shapeContract.methods.rgbColor().call()
+    ]);
+
+    shapeData.color = colorInt.toString(16);
+
+    return shapeData;
+}
+*/
+
 /* on(eventKey, callback) Example usage:
 	solidityAPI.on("shapeAdded", function(shapeAddress, ownerAddress) {
 		// Called by the API whenever a shape is added.
@@ -38,7 +67,7 @@ const shapes = mockData.shapes.map(Shape.fromJSON);
 "randomResolved"    has args (winnerShapeAddress, loserShapeAddress);
 */
 function on(eventKey, callback) {
-	switch eventKey {
+	switch (eventKey) {
 		case "shapeAdded":
 			eventShapeAdded.watch(function(error, result) {
 				if (!error) {

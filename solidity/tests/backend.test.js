@@ -5,7 +5,7 @@ const backendFacade = require('../facades/backend');
 
 describe("Backend facade", () => {
 	it("has a resolveRandomMatch function", () => {
-		assert.equal(typeof backendFacade.getAllShapes, 'function');
+		assert.equal(typeof backendFacade.resolveRandomMatch, 'function');
 	});
 	describe("getAllShapes", () => {
 		it("is a function", () => {
