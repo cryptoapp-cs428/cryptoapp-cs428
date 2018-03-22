@@ -25,6 +25,35 @@ function getEvents() {
 
 const shapes = mockData.shapes.map(Shape.fromJSON);
 
+/* Do something like this to make the backend Shape API (from app.js)
+async function shapeContractData(address) {
+    let shapeData = {address: address};
+    let colorInt;
+
+    const shapeContract = await new solidityAPI.useWeb3.eth.Contract(shapeInterface, address);
+
+    // See https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
+    // These need to line up from top to bottom!
+    [
+        shapeData.owner,
+        shapeData.level,
+        shapeData.experience,
+        shapeData.seekingRandom,
+        colorInt
+    ] = await Promise.all([
+        shapeContract.methods.owner().call(),
+        shapeContract.methods.level().call(),
+        shapeContract.methods.experience().call(),
+        shapeContract.methods.awaitingRandomFight().call(),
+        shapeContract.methods.rgbColor().call()
+    ]);
+
+    shapeData.color = colorInt.toString(16);
+
+    return shapeData;
+}
+*/
+
 /* on(eventKey, callback) Example usage:
 	solidityAPI.on("shapeAdded", function(shapeAddress, ownerAddress) {
 		// Called by the API whenever a shape is added.
