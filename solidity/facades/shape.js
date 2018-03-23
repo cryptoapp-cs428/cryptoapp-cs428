@@ -20,6 +20,24 @@ Shape.fromJSON = function(json) {
 	// TODO: what else?
 	return shape;
 };
+Shape.address = function() {
+	return this.id;
+};
+Shape.owner = async function() {
+	return await this.contractPromise.methods.owner().call();
+};
+Shape.level = async function() {
+	return await this.contractPromise.methods.level().call();
+};
+Shape.experience = async function() {
+	return await this.contractPromise.methods.experience().call();
+};
+Shape.awaitingRandomFight = async function() {
+	return await this.contractPromise.methods.awaitingRandomFight().call();
+};
+Shape.rgbColor = async function() {
+	return await this.contractPromise.methods.rgbColor().call();
+};
 
 // Makes a Shape.useWeb3 function that should be passed the web3 instance to use
 const web3promise = new Promise(resolve => Shape.useWeb3 = resolve);
