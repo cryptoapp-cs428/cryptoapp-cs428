@@ -13,8 +13,6 @@ if (!fs.existsSync(contractPath)) {
 		console.error("Compilation failed!");
 		process.exit(1);
 	}
-} else {
-	console.log("Using existing contract compilation. Run 'npm run solidity:compile' to recompile.");
 }
 
 const compiledContract = fs.readJsonSync(contractPath);
