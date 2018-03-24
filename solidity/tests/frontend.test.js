@@ -8,7 +8,7 @@ const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
 
-var frontendAPI;
+var mainContract, frontendAPI;
 
 beforeEach(async () => {
 		// Get list of accts
@@ -19,28 +19,18 @@ beforeEach(async () => {
 			gas: '3000000'
 		};
 
-		// Use acct to deploy contract
-		var contract = await new web3.eth.Contract(JSON.parse(abi))
+		// Use acct to deploy mainContract
+		mainContract = await new web3.eth.Contract(JSON.parse(abi))
 			.deploy({
 				data: bytecode
 			})
 			.send(sendOpts)
 
 		// Deploy two shapes
+		await deployShapeFrom(accts[1]);
+		await deployShapeFrom(accts[2]);
 
-		await contract.methods.buyShape().send({
-			from: accts[1],
-			value: web3.utils.toWei('0.01', 'ether'),
-			gas: '3000000'
-		});
-
-		await contract.methods.buyShape().send({
-			from: accts[2],
-			value: web3.utils.toWei('0.01', 'ether'),
-			gas: '3000000'
-		});
-
-		frontendAPI = frontendAPIFactory(web3, contract.options.address);
+		frontendAPI = frontendAPIFactory(web3, mainContract.options.address);
 });
 
 describe("Frontend Solidity API", () => {
@@ -49,3 +39,14 @@ describe("Frontend Solidity API", () => {
 		assert.equal(count, 2);
 	});
 });
+
+//======================================================================
+//			Utility functions
+
+function deployShapeFrom(acct) {
+	return mainContract.methods.buyShape().send({
+		from: acct,
+		value: web3.utils.toWei('0.01', 'ether'),
+		gas: '3000000'
+	});
+}
