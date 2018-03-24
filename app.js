@@ -8,11 +8,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const solidityAPI = require('./solidity/facades/backend');
+solidityAPI.useWeb3(require('./solidity/web3/rinkeby'));
 const Shape = require('./solidity/facades/shape');
-const web3 = require('./solidity/web3/rinkeby');
-solidityAPI.useWeb3(web3);
-Shape.useWeb3(web3);
-// TODO: pass web3 to solidityAPI and Shape
 
 const jwt = require('jsonwebtoken'); // used for auth tokens
 const cookieParser = require('cookie-parser');
@@ -463,7 +460,7 @@ solidityAPI.on("shapeAdded" , async (shapeAddress, ownerAddress) => {
      * We make a new shape
      */
 
-    const shapeData = shapeContractData(shapeAddress);
+    const shapeData = await shapeContractData(shapeAddress);
 
     models.Shape.create({
         ethAddress: shapeData.address,
