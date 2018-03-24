@@ -44,9 +44,9 @@ function deployShapeFrom(acct) {
 }
 
 const identity = x => x;
-const isAddress = web3.utils.isAddress;
+const isChecksumAddress = a => web3.utils.isAddress(a) && web3.utils.checkAddressChecksum(a);
 const assertEach = (arr, f=identity) => arr.map(f)
-		.forEach((b, i) => assert(b, `el at ${i} failed assertion`));
+		.forEach((b, i) => assert(b, `el at ${i} failed assertion ${f.name || ''}`));
 
 //======================================================================
 //			Test cases
@@ -74,7 +74,7 @@ describe("Main contract", () => {
 			const shapes = await contract.methods.getShapes().call();
 
 			assert.equal(shapes.length, 1);
-			assert(isAddress(shapes[0]));
+			assert(isChecksumAddress(shapes[0]));
 		});
 		it("can return multiple addresses", async () => {
 			await deployShapeFrom(user1);
@@ -84,7 +84,7 @@ describe("Main contract", () => {
 			const shapes = await contract.methods.getShapes().call();
 
 			assert.equal(shapes.length, 3);
-			assertEach(shapes, isAddress);
+			assertEach(shapes, isChecksumAddress);
 		});
 	});
 });
