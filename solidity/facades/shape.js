@@ -12,6 +12,26 @@ class Shape {
 			// TODO: what else?
 		}
 	}
+	async owner() {
+		const contract = await this.contractPromise;
+		return await contract.methods.owner().call();
+	}
+	async level() {
+		const contract = await this.contractPromise;
+		return await contract.methods.level().call();
+	}
+	async experience() {
+		const contract = await this.contractPromise;
+		return await contract.methods.experience().call();
+	}
+	async awaitingRandomFight() {
+		const contract = await this.contractPromise;
+		return await contract.methods.awaitingRandomFight().call();
+	}
+	async rgbColor() {
+		const contract = await this.contractPromise;
+		return await contract.methods.rgbColor().call();
+	}
 }
 
 // A utility method for inflating Shape objects from JSON representation
@@ -22,21 +42,6 @@ Shape.fromJSON = function(json) {
 };
 Shape.address = function() {
 	return this.id;
-};
-Shape.owner = async function() {
-	return await this.contractPromise.methods.owner().call();
-};
-Shape.level = async function() {
-	return await this.contractPromise.methods.level().call();
-};
-Shape.experience = async function() {
-	return await this.contractPromise.methods.experience().call();
-};
-Shape.awaitingRandomFight = async function() {
-	return await this.contractPromise.methods.awaitingRandomFight().call();
-};
-Shape.rgbColor = async function() {
-	return await this.contractPromise.methods.rgbColor().call();
 };
 
 // Makes a Shape.useWeb3 function that should be passed the web3 instance to use
