@@ -34,12 +34,14 @@ beforeEach(async () => {
 });
 
 describe("Frontend Solidity API", () => {
-	it("should return the number of shapes in the blockchain", async () => {
-		const count = await frontendAPI.getShapeCount();
-		assert.equal(count, 2);
+	describe("getShapeCount()", () => {
+		it("should return the number of shapes in the blockchain", async () => {
+			const count = await frontendAPI.getShapeCount();
+			assert.equal(count, 2);
+		});
 	});
 
-	describe("function: personalSign", () => {
+	describe("personalSign(...)", () => {
 		it("should... do something...", done => {
 			frontendAPI.personalSign("Potato", accts[1], function(err, data) {
 				// personal_sign isn't actually supported by ganace, so this is the best we can do.
