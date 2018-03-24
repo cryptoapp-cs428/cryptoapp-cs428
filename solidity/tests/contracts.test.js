@@ -84,6 +84,15 @@ describe("Main contract", () => {
 		assert.equal(manager, deployer);
 	});
 
+	describe("buyShape()", () => {
+		it("should produce a shape for the calling user", async () => {
+			const shapeAddr = await deployShapeFrom(user1).andGetAddress();
+			const shapeC = getContractForShape(shapeAddr);
+			const owner = await shapeC.methods.owner().call();
+			assert.equal(owner, user1);
+		});
+	});
+
 	describe("getShapes()", () => {
 		it("returns an empty list of shapes (initially)", async () => {
 			const shapes = await contract.methods.getShapes().call();
