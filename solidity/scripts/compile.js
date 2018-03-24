@@ -9,31 +9,36 @@ const {
 const lastBuildTime = getLastBuildTime(buildPath, abisPath);
 console.log("Last Build Time:", lastBuildTime ? new Date(lastBuildTime) : "Never");
 
-const files = fs.readdirSync(contractsPath);
+var files = fs.readdirSync(contractsPath);
+
+const hasChanges = files
+	.map(f => path.resolve(contractsPath, f))
+	.map(p => fs.statSync(p).mtime > lastBuildTime)
+	.reduce((a, b) => a || b);
+if (hasChanges) {
+	removeBuildOutput();
+} else {
+	console.log(`No changes made to contracts since last build`);
+	// Quick-n-dirty way to skip compilation - empty the files array.
+	files = [];
+}
 
 var contracts = {};
 for (let file of files) {
+	console.log(`Compiling ${file} ...`);
 	const filePath = path.resolve(contractsPath, file);
-	if (fs.statSync(filePath).mtime > lastBuildTime) {
-		removeBuildOutput();
+	const src = fs.readFileSync(filePath, 'utf8');
+	const output = solc.compile(src, 1);
 
-		console.log(`Compiling ${file} ...`);
-		const filePath = path.resolve(contractsPath, file);
-		const src = fs.readFileSync(filePath, 'utf8');
-		const output = solc.compile(src, 1);
-
-		if (output.errors.length) {
-			output.errors.forEach(err => console.error(err));
-			if (!Object.keys(output.contracts).length) {
-				console.error(`Could not compile ${file}`);
-				process.exit(1);
-			}
+	if (output.errors.length) {
+		output.errors.forEach(err => console.error(err));
+		if (!Object.keys(output.contracts).length) {
+			console.error(`Could not compile ${file}`);
+			process.exit(1);
 		}
-
-		Object.assign(contracts, output.contracts);
-	} else {
-		console.log(`No changes made to ${file} since last build`);
 	}
+
+	Object.assign(contracts, output.contracts);
 }
 
 const contractCount = Object.keys(contracts).length;
