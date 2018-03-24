@@ -16,8 +16,12 @@ for (let file of files) {
 		console.log(`Compiling ${file} ...`);
 		const filePath = path.resolve(contractsPath, file);
 		const src = fs.readFileSync(filePath, 'utf8');
-		const fileContracts = solc.compile(src, 1).contracts;
-		Object.assign(contracts, fileContracts);
+		const output = solc.compile(src, 1);
+		if (output.errors.length) {
+			output.errors.forEach(err => console.error(err));
+			process.exit(1);
+		}
+		Object.assign(contracts, output.contracts);
 	} catch (err) {
 		console.error(`Could not compile ${file}`, err);
 	}
