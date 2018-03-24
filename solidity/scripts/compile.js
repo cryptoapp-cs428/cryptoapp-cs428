@@ -1,22 +1,21 @@
 const path = require('path');
 const fs = require('fs-extra');
 const solc = require('solc');
-
-const buildPath = path.resolve(__dirname, 'build');
-const abisPath = path.resolve(__dirname, 'facades', 'build_abis');
+const {
+	contractsPath, buildPath, abisPath,
+	removeBuildOutput
+} = require('./_paths');
 
 const lastBuildTime = getLastBuildTime(buildPath, abisPath);
-console.log("Last Build Time:", new Date(lastBuildTime));
-var buildDirsHaveBeenDeleted = false;
+console.log("Last Build Time:", lastBuildTime ? new Date(lastBuildTime) : "Never");
 
-const contractsPath = path.resolve(__dirname, 'contracts');
 const files = fs.readdirSync(contractsPath);
 
 var contracts = {};
 for (let file of files) {
 	const filePath = path.resolve(contractsPath, file);
 	if (fs.statSync(filePath).mtime > lastBuildTime) {
-		if (!buildDirsHaveBeenDeleted) removeDirs(buildPath, abisPath);
+		removeBuildOutput();
 
 		console.log(`Compiling ${file} ...`);
 		const filePath = path.resolve(contractsPath, file);
@@ -38,7 +37,11 @@ for (let file of files) {
 }
 
 const contractCount = Object.keys(contracts).length;
-console.log(`Successfully compiled ${contractCount} contracts`);
+if (contractCount) {
+	console.log(`Successfully compiled ${contractCount} contracts`);
+} else {
+	console.log('No contracts compiled');
+}
 
 for (let name in contracts) {
 	if (name.startsWith(':')) {
@@ -57,13 +60,13 @@ for (let name in contracts) {
 }
 
 function getLastBuildTime(...paths) {
-	return paths
+	const times = paths
 			.filter(path => fs.existsSync(path))
-			.map(path => fs.statSync(path).mtime.getTime())
+			.map(path => fs.statSync(path).mtime.getTime());
+	if (times.length) {
+		return times
 			.reduce((a, b) => Math.min(a, b));
-}
-
-function removeDirs(...paths) {
-	paths.filter(path => fs.existsSync(path))
-			.forEach(path => fs.removeSync(path));
+	} else {
+		return 0;
+	}
 }
