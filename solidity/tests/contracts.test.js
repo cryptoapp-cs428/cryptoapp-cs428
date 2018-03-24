@@ -36,11 +36,16 @@ beforeEach(async () => {
 //			Utility functions
 
 function deployShapeFrom(acct) {
-	return contract.methods.buyShape().send({
+	const prom = contract.methods.buyShape().send({
 		from: acct,
 		value: web3.utils.toWei('0.01', 'ether'),
 		gas: '3000000'
 	});
+	// Return utility to get address of shape
+	prom.andGetAddress = () => prom
+		.then(() => contract.methods.getShapes().call())
+		.then(shapes => shapes[shapes.length - 1]);
+	return prom;
 }
 
 const identity = x => x;
@@ -68,13 +73,14 @@ describe("Main contract", () => {
 
 			assert.deepEqual(shapes, []);
 		});
-		it("returns a list of shape addresses", async () => {
-			await deployShapeFrom(user1);
+		it("returns the list of shape addresses", async () => {
+			const shapeAddr = await deployShapeFrom(user1).andGetAddress();
 
 			const shapes = await contract.methods.getShapes().call();
 
 			assert.equal(shapes.length, 1);
 			assert(isChecksumAddress(shapes[0]));
+			assert.equal(shapes[0], shapeAddr);
 		});
 		it("can return multiple addresses", async () => {
 			await deployShapeFrom(user1);
