@@ -43,8 +43,10 @@ function deployShapeFrom(acct) {
 	});
 }
 
+const identity = x => x;
 const isAddress = web3.utils.isAddress;
-const allTruthy = arr => !!arr.reduce((a, b) => a && b);
+const assertEach = (arr, f=identity) => arr.map(f)
+		.forEach((b, i) => assert(b, `el at ${i} failed assertion`));
 
 //======================================================================
 //			Test cases
@@ -82,7 +84,7 @@ describe("Main contract", () => {
 			const shapes = await contract.methods.getShapes().call();
 
 			assert.equal(shapes.length, 3);
-			assert(allTruthy(shapes.map(isAddress)));
+			assertEach(shapes, isAddress);
 		});
 	});
 });
