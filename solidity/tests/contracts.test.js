@@ -35,6 +35,13 @@ beforeEach(async () => {
 //======================================================================
 //			Utility functions
 
+function toWei(val, unit) {
+	if (!unit) {
+		[val, unit] = val.split(/\s+/);
+	}
+	return web3.utils.toWei(val, unit);
+}
+
 function deployShapeFrom(acct) {
 	const prom = contract.methods.buyShape().send({
 		from: acct,
@@ -52,6 +59,10 @@ const identity = x => x;
 const isChecksumAddress = a => web3.utils.isAddress(a) && web3.utils.checkAddressChecksum(a);
 const assertEach = (arr, f=identity) => arr.map(f)
 		.forEach((b, i) => assert(b, `el at ${i} failed assertion ${f.name || ''}`));
+
+// Some constants, too
+const randomFightCost = toWei('0.0001 ether');
+const notEnoughForARandomFight = toWei('0.00005 ether');
 
 //======================================================================
 //			Test cases
@@ -91,6 +102,60 @@ describe("Main contract", () => {
 
 			assert.equal(shapes.length, 3);
 			assertEach(shapes, isChecksumAddress);
+		});
+	});
+
+	describe("enterRandomFightPool()", () => {
+		let shape1,
+			shape2;
+		beforeEach(async () => {
+			shape1 = await deployShapeFrom(user1).andGetAddress();
+			shape2 = await deployShapeFrom(user2).andGetAddress();
+		});
+		it("should not throw an error when given a valid shape", async () => {
+			await contract.methods.enterRandomFightPool(shape1).call({
+				value: randomFightCost,
+				from: user1,
+			});
+		});
+		it("should require the user to be the shape owner", async () => {
+			// Should fail:
+			await contract.methods.enterRandomFightPool(shape1).call({
+				value: randomFightCost,
+				from: user2,
+			}).then(assert.fail, assert.ok)
+		});
+		it("should require the user to pay at least [randomFightCost]", async () => {
+			// Should fail:
+			await contract.methods.enterRandomFightPool(shape1).call({
+				value: notEnoughForARandomFight,
+				from: user2,
+			}).then(assert.fail, assert.ok);
+		});
+		it("should allow multiple users to enter the random pool", async () => {
+			await Promise.all([
+				contract.methods.enterRandomFightPool(shape1).call({
+					value: randomFightCost,
+					from: user1,
+				}),
+				contract.methods.enterRandomFightPool(shape2).call({
+					value: randomFightCost,
+					from: user2,
+				})
+			]);
+		});
+		xit("should not allow the same shape to enter twice", async () => {
+			await contract.methods.enterRandomFightPool(shape1).call({
+				value: randomFightCost,
+				from: user1,
+			});
+			await contract.methods.enterRandomFightPool(shape1).call({
+				value: randomFightCost,
+				from: user1,
+			}).then(
+				() => assert.fail("Shape entered multiple times"),
+				() => assert.ok("Shape was not allowed to enter multiple times")
+			);
 		});
 	});
 });
