@@ -6,6 +6,8 @@ const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
 
+const shapeAbi = require('../facades/build_abis/CryptoShape_abi.json');
+
 let accts,
 	contract,
 	deployer,
@@ -53,6 +55,10 @@ function deployShapeFrom(acct) {
 		.then(() => contract.methods.getShapes().call())
 		.then(shapes => shapes[shapes.length - 1]);
 	return prom;
+}
+
+function getContractForShape(addr) {
+	return new web3.eth.Contract(shapeAbi, addr);
 }
 
 const identity = x => x;
@@ -112,11 +118,14 @@ describe("Main contract", () => {
 			shape1 = await deployShapeFrom(user1).andGetAddress();
 			shape2 = await deployShapeFrom(user2).andGetAddress();
 		});
-		it("should not throw an error when given a valid shape", async () => {
+		xit("should mark the shape as entered", async () => {
 			await contract.methods.enterRandomFightPool(shape1).call({
 				value: randomFightCost,
 				from: user1,
 			});
+			const shape1C = getContractForShape(shape1);
+			const entered = await shape1C.methods.awaitingRandomFight().call();
+			assert(entered);
 		});
 		it("should require the user to be the shape owner", async () => {
 			// Should fail:
