@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
-const solc = require('solc');
+
 const {
 	contractsPath, buildPath, abisPath,
 	removeBuildOutput
@@ -19,9 +19,11 @@ if (hasChanges) {
 	removeBuildOutput();
 } else {
 	console.log(`No changes made to contracts since last build`);
-	// Quick-n-dirty way to skip compilation - empty the files array.
-	files = [];
+	return; // Stop executing
 }
+
+// This require takes a loong time so we do it down here to only do it if necessary
+const solc = require('solc');
 
 var contracts = {};
 for (let file of files) {
