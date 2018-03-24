@@ -19,7 +19,10 @@ for (let file of files) {
 		const output = solc.compile(src, 1);
 		if (output.errors.length) {
 			output.errors.forEach(err => console.error(err));
-			process.exit(1);
+			if (!Object.keys(output.contracts).length) {
+				console.error("No contracts were successfully compiled");
+				process.exit(1);
+			}
 		}
 		Object.assign(contracts, output.contracts);
 	} catch (err) {
