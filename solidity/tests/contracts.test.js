@@ -55,8 +55,7 @@ function deployShapeFrom(acct) {
 	// Return utility to get address of shape
 	prom.andGetAddress = () => prom
 		.then(() => contract.methods.getShapes().call({
-			from: acct,
-			gas: '6000000'
+			from: acct
 		}))
 		.then(shapes => shapes[shapes.length - 1]);
 	return prom;
