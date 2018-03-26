@@ -14,10 +14,12 @@ let accts,
 	user1,
 	user2;
 
-beforeEach(async () => {
+beforeEach(async function() {
+		this.timeout(60000);
 		// Get list of accts
 		accts = await web3.eth.getAccounts();
 		deployer = accts[0];
+		web3.eth.defaultAccount = deployer;
 		user1 = accts[1];
 		user2 = accts[2];
 
@@ -28,7 +30,7 @@ beforeEach(async () => {
 			})
 			.send({
 				from: deployer,
-				gas: '3000000'
+				gas: '6000000'
 			})
 
 		contract.setProvider(web3.currentProvider);
@@ -48,11 +50,14 @@ function deployShapeFrom(acct) {
 	const prom = contract.methods.buyShape().send({
 		from: acct,
 		value: web3.utils.toWei('0.01', 'ether'),
-		gas: '3000000'
+		gas: '6000000'
 	});
 	// Return utility to get address of shape
 	prom.andGetAddress = () => prom
-		.then(() => contract.methods.getShapes().call())
+		.then(() => contract.methods.getShapes().call({
+			from: acct,
+			gas: '6000000'
+		}))
 		.then(shapes => shapes[shapes.length - 1]);
 	return prom;
 }
@@ -179,4 +184,4 @@ describe("Main contract", () => {
 			);
 		});
 	});
-});
+}).timeout(20000);
