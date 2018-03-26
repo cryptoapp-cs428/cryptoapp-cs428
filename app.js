@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const solidityAPI = require('./solidity/facades/backend');
+solidityAPI.useWeb3(require('./solidity/web3/rinkeby'));
+const Shape = require('./solidity/facades/shape');
 
 const jwt = require('jsonwebtoken'); // used for auth tokens
 const cookieParser = require('cookie-parser');
@@ -56,7 +58,7 @@ const compareSignature = (signature, ethAddress, cb) => {
         let data = `CryptoShapes Sign`;
         let message = ethUtil.toBuffer(data)
         let msgHash = ethUtil.hashPersonalMessage(message)
-        // Get the address of whoever signed this message  
+        // Get the address of whoever signed this message
         // Lot's of cryptography stuff more about which can be leart at : https://hackernoon.com/never-use-passwords-again-with-ethereum-and-metamask-b61c7e409f0d
         let signature = ethUtil.toBuffer(signature)
         let sigParams = ethUtil.fromRpcSig(signature)
@@ -635,7 +637,7 @@ async function shapeContractData(address) {
     let shapeData = {address: address};
     let colorInt;
 
-    const shapeContract = await new solidityAPI.useWeb3.eth.Contract(shapeInterface, address);
+    const shapeContract = new Shape(address);
 
     // See https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
     // These need to line up from top to bottom!
@@ -646,11 +648,11 @@ async function shapeContractData(address) {
         shapeData.seekingRandom,
         colorInt
     ] = await Promise.all([
-        shapeContract.methods.owner().call(),
-        shapeContract.methods.level().call(),
-        shapeContract.methods.experience().call(),
-        shapeContract.methods.awaitingRandomFight().call(),
-        shapeContract.methods.rgbColor().call()
+        shapeContract.owner(),
+        shapeContract.level(),
+        shapeContract.experience(),
+        shapeContract.awaitingRandomFight(),
+        shapeContract.rgbColor()
     ]);
 
     shapeData.color = colorInt.toString(16);

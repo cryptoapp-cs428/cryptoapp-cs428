@@ -1,58 +1,31 @@
 const { address } = require('../deployed_main_contract.json');
-const mainABI = require('../build/CryptoShape_full.json');
+const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
 const mockData = require('./_mockData.json');
 const Shape = require('./shape');
 
 var web3 = null;
 var mainContract;
 var eventShapeAdded, eventChallengePosted, eventChallengeResolved, eventChallengeRejected, eventRandomPosted, eventRandomResolved;
+
+// This must be called before the API is used!
 function useWeb3(newWeb3) {
 	Shape.useWeb3(newWeb3);
 	web3 = newWeb3;
-	var MainContract = web3.eth.contract(abi);
-	mainContract = MainContract.at(address);
+	mainContract = new web3.eth.Contract(mainABI, address);
+	// mainContract = MainContract.at(address);
 	getEvents();
 }
 
 function getEvents() {
-	eventShapeAdded = mainContract.ShapeAdded({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengePosted = mainContract.ChallengePosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeResolved = mainContract.ChallengeResolved({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeRejected = mainContract.ChallengeRejected({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomPosted = mainContract.RandomPosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomResolved = mainContract.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
+	eventShapeAdded = mainContract.events.ShapeAdded({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengePosted = mainContract.events.ChallengePosted({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengeResolved = mainContract.events.ChallengeResolved({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengeRejected = mainContract.events.ChallengeRejected({}, {fromBlock: 0, toBlock: 'latest'});
+	eventRandomPosted = mainContract.events.RandomPosted({}, {fromBlock: 0, toBlock: 'latest'});
+	eventRandomResolved = mainContract.events.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
 }
 
 const shapes = mockData.shapes.map(Shape.fromJSON);
-
-/* Do something like this to make the backend Shape API (from app.js)
-async function shapeContractData(address) {
-    let shapeData = {address: address};
-    let colorInt;
-
-    const shapeContract = await new solidityAPI.useWeb3.eth.Contract(shapeInterface, address);
-
-    // See https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
-    // These need to line up from top to bottom!
-    [
-        shapeData.owner,
-        shapeData.level,
-        shapeData.experience,
-        shapeData.seekingRandom,
-        colorInt
-    ] = await Promise.all([
-        shapeContract.methods.owner().call(),
-        shapeContract.methods.level().call(),
-        shapeContract.methods.experience().call(),
-        shapeContract.methods.awaitingRandomFight().call(),
-        shapeContract.methods.rgbColor().call()
-    ]);
-
-    shapeData.color = colorInt.toString(16);
-
-    return shapeData;
-}
-*/
 
 /* on(eventKey, callback) Example usage:
 	solidityAPI.on("shapeAdded", function(shapeAddress, ownerAddress) {
@@ -69,42 +42,42 @@ async function shapeContractData(address) {
 function on(eventKey, callback) {
 	switch (eventKey) {
 		case "shapeAdded":
-			eventShapeAdded.watch(function(error, result) {
+			eventShapeAdded.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.shapeAddress, result.args.owner);
 				}
 			});
 			break;
 		case "challengePosted":
-			eventChallengePosted.watch(function(error, result) {
+			eventChallengePosted.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
 				}
 			});
 			break;
 		case "challengeResolved":
-			eventChallengeResolved.watch(function(error, result) {
+			eventChallengeResolved.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape, result.args.sourceWon);
 				}
 			});
 			break;
 		case "challengeRejected":
-			eventChallengeRejected.watch(function(error, result) {
+			eventChallengeRejected.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
 				}
 			});
 			break;
 		case "randomPosted":
-			eventRandomPosted.watch(function(error, result) {
+			eventRandomPosted.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.shapeAddress);
 				}
 			});
 			break;
 		case "randomResolved":
-			eventRandomResolved.watch(function(error, result) {
+			eventRandomResolved.on('data', function(error, result) {
 				if (!error) {
 					callback(result.args.winnerShapeAddress, result.args.loserShapeAddress);
 				}
