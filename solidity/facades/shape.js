@@ -1,9 +1,11 @@
 const shapeAbi = require('./build_abis/CryptoShape_abi.json');
 
+var web3 = null;
+
 class Shape {
 	constructor(address) {
 		this.id = address;
-		this.contractPromise = _getContractAt(address);
+		this.contract = web3.eth.Contract(shapeAbi, address);
 	}
 
 	toJSON() {
@@ -13,24 +15,19 @@ class Shape {
 		}
 	}
 	async owner() {
-		const contract = await this.contractPromise;
-		return await contract.methods.owner().call();
+		return await this.contract.methods.owner().call();
 	}
 	async level() {
-		const contract = await this.contractPromise;
-		return await contract.methods.level().call();
+		return await this.contract.methods.level().call();
 	}
 	async experience() {
-		const contract = await this.contractPromise;
-		return await contract.methods.experience().call();
+		return await this.contract.methods.experience().call();
 	}
 	async awaitingRandomFight() {
-		const contract = await this.contractPromise;
-		return await contract.methods.awaitingRandomFight().call();
+		return await this.contract.methods.awaitingRandomFight().call();
 	}
 	async rgbColor() {
-		const contract = await this.contractPromise;
-		return await contract.methods.rgbColor().call();
+		return await this.contract.methods.rgbColor().call();
 	}
 }
 
@@ -44,13 +41,6 @@ Shape.address = function() {
 	return this.id;
 };
 
-// Makes a Shape.useWeb3 function that should be passed the web3 instance to use
-const web3promise = new Promise(resolve => Shape.useWeb3 = resolve);
-
-// Returns a promise for a web3 Contract pointed to the given address
-function _getContractAt(address) {
-	return web3promise
-		.then(web3 => new web3.eth.Contract(shapeAbi, address));
-}
+Shape.useWeb3 = newWeb3 => web3 = newWeb3;
 
 module.exports = Shape;
