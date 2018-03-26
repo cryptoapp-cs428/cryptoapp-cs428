@@ -122,23 +122,26 @@ describe("Main contract", () => {
 
 	describe("enterRandomFightPool()", () => {
 		let shape1,
-			shape2;
+			shape2,
+			shape1C;
 		beforeEach(async () => {
 			shape1 = await deployShapeFrom(user1).andGetAddress();
 			shape2 = await deployShapeFrom(user2).andGetAddress();
+			shape1C = getContractForShape(shape1);
 		});
-		xit("should mark the shape as entered", async () => {
-			await contract.methods.enterRandomFightPool(shape1).call({
+		it("should mark the shape as entered", async () => {
+			const entered2 = await shape1C.methods.awaitingRandomFight().call();
+			assert(!entered2);
+			await contract.methods.enterRandomFightPool(shape1).send({
 				value: randomFightCost,
 				from: user1,
 			});
-			const shape1C = getContractForShape(shape1);
 			const entered = await shape1C.methods.awaitingRandomFight().call();
 			assert(entered);
 		});
 		it("should require the user to be the shape owner", async () => {
 			// Should fail:
-			await contract.methods.enterRandomFightPool(shape1).call({
+			await contract.methods.enterRandomFightPool(shape1).send({
 				value: randomFightCost,
 				from: user2,
 			}).then(assert.fail, assert.ok)
@@ -152,22 +155,22 @@ describe("Main contract", () => {
 		});
 		it("should allow multiple users to enter the random pool", async () => {
 			await Promise.all([
-				contract.methods.enterRandomFightPool(shape1).call({
+				contract.methods.enterRandomFightPool(shape1).send({
 					value: randomFightCost,
 					from: user1,
 				}),
-				contract.methods.enterRandomFightPool(shape2).call({
+				contract.methods.enterRandomFightPool(shape2).send({
 					value: randomFightCost,
 					from: user2,
 				})
 			]);
 		});
-		xit("should not allow the same shape to enter twice", async () => {
-			await contract.methods.enterRandomFightPool(shape1).call({
+		it("should not allow the same shape to enter twice", async () => {
+			await contract.methods.enterRandomFightPool(shape1).send({
 				value: randomFightCost,
 				from: user1,
 			});
-			await contract.methods.enterRandomFightPool(shape1).call({
+			await contract.methods.enterRandomFightPool(shape1).send({
 				value: randomFightCost,
 				from: user1,
 			}).then(
