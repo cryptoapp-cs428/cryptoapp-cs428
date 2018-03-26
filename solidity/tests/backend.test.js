@@ -1,3 +1,4 @@
+require('../scripts/compile');
 const assert = require('assert');
 const backendFacade = require('../facades/backend');
 

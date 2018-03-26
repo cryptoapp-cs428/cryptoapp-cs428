@@ -1,11 +1,10 @@
+require('../scripts/compile');
 const assert = require('assert');
 const web3 = require('../web3/ganache');
 
 const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
-
-console.log("ProTip: make sure you've compiled your contracts since your last edit!");
 
 let accts, contract, sendOpts;
 

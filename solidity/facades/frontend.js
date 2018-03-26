@@ -6,9 +6,9 @@
 const address = require('../deployed_main_contract.json').address;
 const abi = require('./build_abis/CryptoShapeMain_abi.json');
 
-module.exports = function(web3) {
+module.exports = function(web3, addressOverride) {
 
-	const mainContract = new web3.eth.Contract(abi, address);
+	const mainContract = new web3.eth.Contract(abi, addressOverride || address);
 
 	return {
 		// Returns a promise for the default account, or the first account if no default is set
@@ -29,8 +29,10 @@ module.exports = function(web3) {
 				from: fromAddress
 			}, callback);
 		},
-		getAnimalCount: function() {
-			return Promise.resolve(0);
+		getShapeCount: function() {
+			return mainContract.methods.getShapes().call().then(function(shapes) {
+				return shapes.length;
+			})
 		},
 		animalIndexToOwner: function() {
 			return Promise.resolve(null);
