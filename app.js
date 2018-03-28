@@ -53,14 +53,14 @@ let transporter = nodemailer.createTransport({
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
 
-const compareSignature = (signature, ethAddress, cb) => {
+const compareSignature = (sig, ethAddress, cb) => {
     try {
         let data = `CryptoShapes Sign`;
         let message = ethUtil.toBuffer(data)
         let msgHash = ethUtil.hashPersonalMessage(message)
         // Get the address of whoever signed this message
         // Lot's of cryptography stuff more about which can be leart at : https://hackernoon.com/never-use-passwords-again-with-ethereum-and-metamask-b61c7e409f0d
-        let signature = ethUtil.toBuffer(signature)
+        let signature = ethUtil.toBuffer(sig)
         let sigParams = ethUtil.fromRpcSig(signature)
         // Given a message and a signature, get the publicKey
         var publicKey = ethUtil.ecrecover(msgHash, sigParams.v, sigParams.r, sigParams.s)
@@ -142,11 +142,11 @@ const authenticateRequest = (req, res, cb) => {
             return;
         } else {
 
-            // Find the user associated with this email
+            // Find the user associated with this ethAddress
             models.User.findOne({ where: { ethAddress: decoded.ethAddress } }).then(user => {
                 if (!user) {
                     // invalid user login
-                    console.log('Invalid login email..');
+                    console.log('Invalid ethereum address..');
                     return res.redirect('/login');
                 } else {
                     cb(user);
@@ -211,7 +211,7 @@ app.post('/login', (req, res) => {
                 if (!authenticated) { return res.status(401).json({ error: 'metamask auth failed' }); }
 
                 // User has logged in
-                let token = jwt.sign({ email: user.ethAddress }, process.env.TOKEN_SECRET, {
+                let token = jwt.sign({ ethAddress: user.ethAddress }, process.env.TOKEN_SECRET, {
                     expiresIn: '30d' // expires in x days
                 });
 
