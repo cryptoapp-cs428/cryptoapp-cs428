@@ -5,7 +5,7 @@ var web3 = null;
 class Shape {
 	constructor(address) {
 		this.id = address;
-		this.contract = web3.eth.Contract(shapeAbi, address);
+		this.contract = new web3.eth.Contract(shapeAbi, address);
 	}
 
 	toJSON() {
