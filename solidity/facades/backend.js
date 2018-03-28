@@ -9,11 +9,11 @@ var web3, wsWeb3;
 var mainContract;
 var eventShapeAdded, eventChallengePosted, eventChallengeResolved, eventChallengeRejected, eventRandomPosted, eventRandomResolved;
 
-function useWeb3(newWeb3, newWsWeb3) {
+function useWeb3(newWeb3, newWsWeb3, addressOverride) {
 	Shape.useWeb3(newWeb3);
 	web3 = newWeb3;
 	wsWeb3 = newWsWeb3;
-	mainContract = new web3.eth.Contract(mainABI, address);
+	mainContract = new web3.eth.Contract(mainABI, addressOverride || address);
 	// mainContract = MainContract.at(address);
 	getEvents();
 }
@@ -85,7 +85,7 @@ function on(eventKey, callback) {
 			});
 			break;
 		default:
-			break;
+			throw new Error("Unrecognized event type: " + eventKey);
 	}
 }
 
