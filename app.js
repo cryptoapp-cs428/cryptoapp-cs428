@@ -66,8 +66,9 @@ const compareSignature = (sig, ethAddress, cb) => {
         var sender = ethUtil.publicToAddress(publicKey)
         var addr = ethUtil.bufferToHex(sender)
 
-        return cb(null, addr == ethAddress)
+        return cb(null, addr.toLowerCase() === ethAddress.toLowerCase())
     } catch (err) {
+        console.log(err);
         return cb(err);
     }
 }
