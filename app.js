@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const solidityAPI = require('./solidity/facades/backend');
-solidityAPI.useWeb3(require('./solidity/web3/rinkeby'));
 const Shape = require('./solidity/facades/shape');
 
 const jwt = require('jsonwebtoken'); // used for auth tokens

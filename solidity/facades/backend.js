@@ -3,26 +3,29 @@ const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
 const mockData = require('./_mockData.json');
 const Shape = require('./shape');
 
-var web3 = null;
+useWeb3(require('../web3/rinkeby'), require('../web3/rinkeby-ws'));
+
+var web3, wsWeb3;
 var mainContract;
 var eventShapeAdded, eventChallengePosted, eventChallengeResolved, eventChallengeRejected, eventRandomPosted, eventRandomResolved;
 
-// This must be called before the API is used!
-function useWeb3(newWeb3) {
+function useWeb3(newWeb3, newWsWeb3) {
 	Shape.useWeb3(newWeb3);
 	web3 = newWeb3;
+	wsWeb3 = newWsWeb3;
 	mainContract = new web3.eth.Contract(mainABI, address);
 	// mainContract = MainContract.at(address);
 	getEvents();
 }
 
 function getEvents() {
-	eventShapeAdded = mainContract.events.ShapeAdded({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengePosted = mainContract.events.ChallengePosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeResolved = mainContract.events.ChallengeResolved({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeRejected = mainContract.events.ChallengeRejected({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomPosted = mainContract.events.RandomPosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomResolved = mainContract.events.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
+	const wsMainContract = new wsWeb3.eth.Contract(mainABI, address);
+	eventShapeAdded = wsMainContract.events.ShapeAdded({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengePosted = wsMainContract.events.ChallengePosted({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengeResolved = wsMainContract.events.ChallengeResolved({}, {fromBlock: 0, toBlock: 'latest'});
+	eventChallengeRejected = wsMainContract.events.ChallengeRejected({}, {fromBlock: 0, toBlock: 'latest'});
+	eventRandomPosted = wsMainContract.events.RandomPosted({}, {fromBlock: 0, toBlock: 'latest'});
+	eventRandomResolved = wsMainContract.events.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
 }
 
 const shapes = mockData.shapes.map(Shape.fromJSON);
