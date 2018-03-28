@@ -32,9 +32,10 @@ function on(eventKey, callback) {
 	switch (eventKey) {
 		case "shapeAdded":
 			wsMainContract.events.ShapeAdded({ fromBlock: 0 }, function(error, result) {
-				console.log("called!", error, result);
 				if (!error) {
 					callback(result.args.shapeAddress, result.args.owner);
+				} else {
+					console.error("Error in shapeAdded event", error);
 				}
 			});
 			break;
@@ -42,6 +43,8 @@ function on(eventKey, callback) {
 			wsMainContract.events.ChallengePosted({ fromBlock: 0 }, function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
+				} else {
+					console.error("Error in challengePosted event", error);
 				}
 			});
 			break;
@@ -49,6 +52,8 @@ function on(eventKey, callback) {
 			wsMainContract.events.ChallengeResolved({ fromBlock: 0 }, function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape, result.args.sourceWon);
+				} else {
+					console.error("Error in challengeResolved event", error);
 				}
 			});
 			break;
@@ -56,6 +61,8 @@ function on(eventKey, callback) {
 			wsMainContract.events.ChallengeRejected({ fromBlock: 0 }, function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
+				} else {
+					console.error("Error in challengeRejected event", error);
 				}
 			});
 			break;
@@ -63,6 +70,8 @@ function on(eventKey, callback) {
 			wsMainContract.events.RandomPosted({ fromBlock: 0 }, function(error, result) {
 				if (!error) {
 					callback(result.args.shapeAddress);
+				} else {
+					console.error("Error in randomPosted event", error);
 				}
 			});
 			break;
@@ -70,6 +79,8 @@ function on(eventKey, callback) {
 			wsMainContract.events.RandomResolved({ fromBlock: 0 }, function(error, result) {
 				if (!error) {
 					callback(result.args.winnerShapeAddress, result.args.loserShapeAddress);
+				} else {
+					console.error("Error in randomResolved event", error);
 				}
 			});
 			break;
