@@ -28,8 +28,6 @@ function getEvents() {
 	eventRandomResolved = wsMainContract.events.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
 }
 
-const shapes = mockData.shapes.map(Shape.fromJSON);
-
 /* on(eventKey, callback) Example usage:
 	solidityAPI.on("shapeAdded", function(shapeAddress, ownerAddress) {
 		// Called by the API whenever a shape is added.
@@ -96,7 +94,7 @@ module.exports = {
 	Shape,
 
 	async getAllShapes(){
-		return shapes;
+		return [];
 	},
 	async resolveRandomMatch(shapeID1, shapeID2) {
 		// Stub function, does nothing yet
