@@ -2,6 +2,7 @@ require('../scripts/compile');
 const assert = require('assert');
 const backendFacade = require('../facades/backend');
 const web3 = require('../web3/ganache');
+const wsWeb3 = web3;
 
 const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
@@ -11,7 +12,8 @@ var mainContract,
 	accts,
 	deployer,
 	user1;
-beforeEach(async () => {
+beforeEach(async function() {
+	this.timeout(60000);
 	// Get list of accts
 	accts = await web3.eth.getAccounts();
 	deployer = accts[0];
@@ -27,7 +29,7 @@ beforeEach(async () => {
 		})
 	assert.ok(mainContract.options.address);
 
-	backendFacade.useWeb3(require('../web3/rinkeby'), require('../web3/rinkeby-ws'), mainContract.options.address);
+	backendFacade.useWeb3(web3, wsWeb3, mainContract.options.address);
 });
 
 //======================================================================
@@ -71,14 +73,14 @@ describe("Backend facade", () => {
 	describe("events", () => {
 		describe("shape added", () => {
 			it.only("fires when a shape is purchased", async () => {
-				var called = false;
-				backendFacade.on("shapeAdded", () => called = true);
+				var callback;
+				var promise = new Promise(resolve => callback = resolve);
 
-				await deployShapeFrom(user1);
-				await new Promise(resolve => setTimeout(resolve, 200));
+				backendFacade.on("shapeAdded", callback);
+				await deployShapeFrom(user1).andGetAddress();
 
-				assert(called);
+				await promise;
 			});
 		});
 	});
-});
+}).timeout(20000);
