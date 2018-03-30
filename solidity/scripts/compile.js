@@ -22,6 +22,7 @@ if (hasChanges) {
 	return; // Stop executing
 }
 
+console.log("Loading compiler...");
 // This require takes a loong time so we do it down here to only do it if necessary
 const solc = require('solc');
 

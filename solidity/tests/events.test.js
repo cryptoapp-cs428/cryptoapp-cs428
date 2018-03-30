@@ -71,7 +71,7 @@ function deployShapeFrom(acct) {
 describe("events", () => {
 	describe("utility methods", () => {
 		describe("deployShapeFrom", () => {
-			it.only("deploys a shape", async () => {
+			it("deploys a shape", async () => {
 				var shapeAddress = await deployShapeFrom(user1).andGetAddress();
 
 				assert(web3.utils.isAddress(shapeAddress));
@@ -80,7 +80,7 @@ describe("events", () => {
 	});
 
 	describe("shape added", () => {
-		it("fires when a shape is purchased", async () => {
+		xit("fires when a shape is purchased", async () => {
 			var callback;
 			var promise = new Promise(resolve => callback = resolve);
 

@@ -24,7 +24,7 @@ beforeEach(async () => {
 			.deploy({
 				data: bytecode
 			})
-			.send(sendOpts)
+			.send(sendOpts);
 
 		// Deploy two shapes
 		await deployShapeFrom(accts[1]);
@@ -46,7 +46,7 @@ describe("Frontend Solidity API", () => {
 			frontendAPI.personalSign("Potato", accts[1], function(err, data) {
 				// personal_sign isn't actually supported by ganace, so this is the best we can do.
 				done();
-			})
+			});
 		});
 	});
 });

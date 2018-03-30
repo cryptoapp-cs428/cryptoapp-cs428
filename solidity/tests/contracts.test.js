@@ -31,7 +31,7 @@ beforeEach(async function() {
 			.send({
 				from: deployer,
 				gas: '6000000'
-			})
+			});
 
 		contract.setProvider(web3.currentProvider);
 });
@@ -54,10 +54,7 @@ function deployShapeFrom(acct) {
 	});
 	// Return utility to get address of shape
 	prom.andGetAddress = () => prom
-		.then(() => contract.methods.getShapes().call({
-			from: acct
-		}))
-		.then(shapes => shapes[shapes.length - 1]);
+		.then(result => result.events['ShapeAdded'].returnValues.shapeAddress);
 	return prom;
 }
 
@@ -148,7 +145,7 @@ describe("Main contract", () => {
 			await contract.methods.enterRandomFightPool(shape1).send({
 				value: randomFightCost,
 				from: user2,
-			}).then(assert.fail, assert.ok)
+			}).then(assert.fail, assert.ok);
 		});
 		it("should require the user to pay at least [randomFightCost]", async () => {
 			// Should fail:

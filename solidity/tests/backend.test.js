@@ -26,29 +26,11 @@ beforeEach(async function() {
 		.send({
 			from: deployer,
 			gas: '6000000'
-		})
+		});
 	assert.ok(mainContract.options.address);
 
 	backendFacade.useWeb3(web3, wsWeb3, mainContract.options.address);
 });
-
-//======================================================================
-//			Utility functions
-
-function deployShapeFrom(acct) {
-	const prom = mainContract.methods.buyShape().send({
-		from: acct,
-		value: web3.utils.toWei('0.01', 'ether'),
-		gas: '6000000'
-	});
-	// Return utility to get address of shape
-	prom.andGetAddress = () => prom
-		.then(() => mainContract.methods.getShapes().call({
-			from: acct
-		}))
-		.then(shapes => shapes[shapes.length - 1]);
-	return prom;
-}
 
 //======================================================================
 //			Test cases:
