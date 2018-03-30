@@ -53,7 +53,7 @@ function deployShapeFrom(acct) {
 //======================================================================
 //			Test cases:
 
-describe("events", () => {
+xdescribe("events", () => {
 	describe("utility methods", () => {
 		describe("deployShapeFrom", () => {
 			it("deploys a shape", async () => {

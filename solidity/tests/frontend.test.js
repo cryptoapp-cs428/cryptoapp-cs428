@@ -8,14 +8,23 @@ const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
 
-var accts, mainContract, frontendAPI;
+var accts,
+	mainContract,
+	frontendAPI,
+	deployer,
+	user,
+	otherUser;
 
 beforeEach(async () => {
 		// Get list of accts
 		accts = await web3.eth.getAccounts();
 
+		user = accts[0];
+		deployer = accts[1];
+		otherUser = accts[2];
+
 		var sendOpts = {
-			from: accts[0],
+			from: deployer,
 			gas: '3000000'
 		};
 
@@ -26,18 +35,33 @@ beforeEach(async () => {
 			})
 			.send(sendOpts);
 
-		// Deploy two shapes
-		await deployShapeFrom(accts[1]);
-		await deployShapeFrom(accts[2]);
-
 		frontendAPI = frontendAPIFactory(web3, mainContract.options.address);
 });
 
 describe("Frontend Solidity API", () => {
+	describe("getUserAccount()", () => {
+		it("should return the user account address", async () => {
+			const addr = await frontendAPI.getUserAccount();
+			assert.equal(addr, user);
+		});
+	});
 	describe("getShapeCount()", () => {
+		beforeEach(async () => {
+			// Deploy two shapes
+			await deployShapeFrom(user);
+			await deployShapeFrom(otherUser);
+		});
+
 		it("should return the number of shapes in the blockchain", async () => {
 			const count = await frontendAPI.getShapeCount();
 			assert.equal(count, 2);
+		});
+	});
+
+	describe("buyShape()", () => {
+		it("should return a valid address", async () => {
+			var addr = await frontendAPI.buyShape();
+			assert(web3.utils.isAddress(addr));
 		});
 	});
 
