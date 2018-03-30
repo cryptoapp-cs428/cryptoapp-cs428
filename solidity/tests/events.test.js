@@ -1,8 +1,11 @@
 require('../scripts/compile');
 const assert = require('assert');
 const backendFacade = require('../facades/backend');
-const web3 = require('../web3/rinkeby');
-const wsWeb3 = require('../web3/rinkeby-ws');
+
+const truffleContract = require('truffle-contract');
+
+const web3 = require('../web3/ganache');
+const wsWeb3 = require('../web3/ganache');
 
 const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
@@ -18,32 +21,44 @@ before(async function() {
 	accts = await web3.eth.getAccounts();
 	deployer = accts[0];
 	user1 = accts[1];
-	// Use acct to deploy contract
-	mainContract = await new web3.eth.Contract(JSON.parse(abi))
-		.deploy({
-			data: bytecode
-		})
-		.send({
-			from: deployer,
-			gas: '6000000'
-		});
-	assert.ok(mainContract.options.address);
+	console.log("Accounts obtained");
 
-	backendFacade.useWeb3(web3, wsWeb3, mainContract.options.address);
+	// Use acct to deploy contract
+	const provider = web3.currentProvider;
+	assert.ok(provider, "web3.currentProvider is not ok");
+	mainContract = await deployContract(JSON.parse(abi), bytecode, provider, deployer);
+	assert.ok(mainContract);
+	console.log("Main contract deployed");
+
+	backendFacade.useWeb3(web3, wsWeb3, mainContract.address);
+	console.log("backendFacade set up");
 });
 
 //======================================================================
 //			Utility functions
 
+function deployContract(abi, bytecode, provider, deployFrom) {
+	var MainContract = truffleContract({
+		abi: abi,
+		unlinked_binary: bytecode,
+	});
+	MainContract.setProvider(provider);
+	console.log("Deploying from ", deployFrom);
+	return MainContract.new({
+		from: deployFrom,
+		gas: '6000000',
+	});
+}
+
 function deployShapeFrom(acct) {
-	const prom = mainContract.methods.buyShape().send({
+	const prom = mainContract.buyShape({
 		from: acct,
 		value: web3.utils.toWei('0.01', 'ether'),
 		gas: '6000000'
 	});
 	// Return utility to get address of shape
 	prom.andGetAddress = () => prom
-		.then(() => mainContract.methods.getShapes().call({
+		.then(() => mainContract.getShapes({
 			from: acct
 		}))
 		.then(shapes => shapes[shapes.length - 1]);
@@ -54,6 +69,16 @@ function deployShapeFrom(acct) {
 //			Test cases:
 
 describe("events", () => {
+	describe("utility methods", () => {
+		describe("deployShapeFrom", () => {
+			it.only("deploys a shape", async () => {
+				var shapeAddress = await deployShapeFrom(user1).andGetAddress();
+
+				assert(web3.utils.isAddress(shapeAddress));
+			});
+		});
+	});
+
 	describe("shape added", () => {
 		it("fires when a shape is purchased", async () => {
 			var callback;

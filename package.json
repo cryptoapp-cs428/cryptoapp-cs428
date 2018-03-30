@@ -55,6 +55,7 @@
     "solc": "^0.4.21",
     "style-loader": "0.19.0",
     "sw-precache-webpack-plugin": "0.11.4",
+    "truffle-contract": "^3.0.4",
     "truffle-hdwallet-provider": "0.0.3",
     "url-loader": "0.6.2",
     "web3": "^1.0.0-beta.26",
@@ -119,7 +120,7 @@
       "before": false
     },
     "rules": {
-        "semi": 2
+      "semi": 2
     }
   },
   "description": "CryptoApp",
