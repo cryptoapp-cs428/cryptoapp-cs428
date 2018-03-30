@@ -114,7 +114,13 @@
     ]
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "globals": {
+      "before": false
+    },
+    "rules": {
+        "semi": 2
+    }
   },
   "description": "CryptoApp",
   "main": "app.js",

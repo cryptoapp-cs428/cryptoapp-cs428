@@ -40,7 +40,7 @@ function on(eventKey, callback) {
 			});
 			break;
 		case "challengePosted":
-			wsMainContract.events.ChallengePosted({ fromBlock: 0 }, function(error, result) {
+			wsMainContract.events.ChallengePosted(function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
 				} else {
@@ -49,7 +49,7 @@ function on(eventKey, callback) {
 			});
 			break;
 		case "challengeResolved":
-			wsMainContract.events.ChallengeResolved({ fromBlock: 0 }, function(error, result) {
+			wsMainContract.events.ChallengeResolved(function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape, result.args.sourceWon);
 				} else {
@@ -58,7 +58,7 @@ function on(eventKey, callback) {
 			});
 			break;
 		case "challengeRejected":
-			wsMainContract.events.ChallengeRejected({ fromBlock: 0 }, function(error, result) {
+			wsMainContract.events.ChallengeRejected(function(error, result) {
 				if (!error) {
 					callback(result.args.sourceShape, result.args.targetShape);
 				} else {
@@ -67,7 +67,7 @@ function on(eventKey, callback) {
 			});
 			break;
 		case "randomPosted":
-			wsMainContract.events.RandomPosted({ fromBlock: 0 }, function(error, result) {
+			wsMainContract.events.RandomPosted(function(error, result) {
 				if (!error) {
 					callback(result.args.shapeAddress);
 				} else {
