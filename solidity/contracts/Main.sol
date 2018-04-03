@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 /// @title Base contract for CryptoShapes. Manages CryptoShape creation and battles.
 contract CryptoShapeMain {
@@ -39,7 +39,7 @@ contract CryptoShapeMain {
         address newShape = new CryptoShape(msg.sender, this);
         shapes.push(newShape);
         shapeMap[newShape] = true;
-        ShapeAdded(newShape, msg.sender);
+        emit ShapeAdded(newShape, msg.sender);
     }
 
     /// @dev Get the list of all shapes in the blockchain.
@@ -56,7 +56,7 @@ contract CryptoShapeMain {
         require(shape.owner() == msg.sender); // Owner of shape is doing it
         require(!shape.awaitingRandomFight()); // Shape isn't already registered for random
         shape.enterRandom();
-        RandomPosted(shapeAddress);
+        emit RandomPosted(shapeAddress);
     }
 
     function resolveRandomFight(address shape1, address shape2) public restricted {
@@ -72,11 +72,11 @@ contract CryptoShapeMain {
         if (s1Won) {
             s1.getExperience(experienceForWin(s1.level(), s2.level()));
             s2.getExperience(experienceForLoss());
-            RandomResolved(shape1, shape2);
+            emit RandomResolved(shape1, shape2);
         } else {
             s2.getExperience(experienceForWin(s2.level(), s1.level()));
             s1.getExperience(experienceForLoss());
-            RandomResolved(shape2, shape1);
+            emit RandomResolved(shape2, shape1);
         }
     }
 
@@ -94,7 +94,7 @@ contract CryptoShapeMain {
         sourceShape.challenge(target);
         targetShape.challengedBy(source);
 
-        ChallengePosted(source, target);
+        emit ChallengePosted(source, target);
     }
 
     function acceptChallenge(address source, address target) public payable {
@@ -116,7 +116,7 @@ contract CryptoShapeMain {
             sourceShape.getExperience(experienceForLoss());
         }
 
-        ChallengeResolved(source, target, sourceWon);
+        emit ChallengeResolved(source, target, sourceWon);
     }
 
     function rejectChallenge(address source, address target) public {
@@ -131,7 +131,7 @@ contract CryptoShapeMain {
         sourceShape.challengeRejectedBy(target);
         targetShape.rejectChallengeBy(source);
 
-        ChallengeRejected(source, target);
+        emit ChallengeRejected(source, target);
 
         // Refund the challenge issuer. This line can technically fail.
         // A more robust solution is described here: http://solidity.readthedocs.io/en/develop/common-patterns.html#withdrawal-from-contracts
