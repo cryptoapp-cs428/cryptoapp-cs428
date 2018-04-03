@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.18;
 
 /// @title Base contract for CryptoShapes. Manages CryptoShape creation and battles.
 contract CryptoShapeMain {
@@ -12,7 +12,6 @@ contract CryptoShapeMain {
     event RandomResolved(address winnerShapeAddress, address loserShapeAddress);
 
     /*** DATA TYPES ***/
-
 
     /*** CONSTANTS ***/
     /// @dev The price to purchase a new CryptoShape
@@ -40,7 +39,7 @@ contract CryptoShapeMain {
         address newShape = new CryptoShape(msg.sender, this);
         shapes.push(newShape);
         shapeMap[newShape] = true;
-        emit ShapeAdded(newShape, msg.sender);
+        ShapeAdded(newShape, msg.sender);
     }
 
     /// @dev Get the list of all shapes in the blockchain.
@@ -57,7 +56,7 @@ contract CryptoShapeMain {
         require(shape.owner() == msg.sender); // Owner of shape is doing it
         require(!shape.awaitingRandomFight()); // Shape isn't already registered for random
         shape.enterRandom();
-        emit RandomPosted(shapeAddress);
+        RandomPosted(shapeAddress);
     }
 
     function resolveRandomFight(address shape1, address shape2) public restricted {
@@ -73,11 +72,11 @@ contract CryptoShapeMain {
         if (s1Won) {
             s1.getExperience(experienceForWin(s1.level(), s2.level()));
             s2.getExperience(experienceForLoss());
-            emit RandomResolved(shape1, shape2);
+            RandomResolved(shape1, shape2);
         } else {
             s2.getExperience(experienceForWin(s2.level(), s1.level()));
             s1.getExperience(experienceForLoss());
-            emit RandomResolved(shape2, shape1);
+            RandomResolved(shape2, shape1);
         }
     }
 
@@ -95,7 +94,7 @@ contract CryptoShapeMain {
         sourceShape.challenge(target);
         targetShape.challengedBy(source);
 
-        emit ChallengePosted(source, target);
+        ChallengePosted(source, target);
     }
 
     function acceptChallenge(address source, address target) public payable {
@@ -117,7 +116,7 @@ contract CryptoShapeMain {
             sourceShape.getExperience(experienceForLoss());
         }
 
-        emit ChallengeResolved(source, target, sourceWon);
+        ChallengeResolved(source, target, sourceWon);
     }
 
     function rejectChallenge(address source, address target) public {
@@ -132,7 +131,7 @@ contract CryptoShapeMain {
         sourceShape.challengeRejectedBy(target);
         targetShape.rejectChallengeBy(source);
 
-        emit ChallengeRejected(source, target);
+        ChallengeRejected(source, target);
 
         // Refund the challenge issuer. This line can technically fail.
         // A more robust solution is described here: http://solidity.readthedocs.io/en/develop/common-patterns.html#withdrawal-from-contracts
@@ -140,8 +139,16 @@ contract CryptoShapeMain {
     }
 
     function resolveFight(CryptoShape s1, CryptoShape s2) private view returns (bool) {
-        // TODO
-        return random() % 2 == 0;
+        // Bright colors are more sensitive to the random component than dark colors
+        uint s1Random = (random() % 256) - 128;
+        uint s1Power = (s1.red() * s2.green() * (uint(s1.level()) + 1)**2) + (s1Random * s1.red())
+                        + (s1.green() * s2.blue() * (uint(s1.level()) + 1)**2) + (s1Random * s1.green())
+                        + (s1.blue() * s2.red() * (uint(s1.level()) + 1)**2) + (s1Random * s1.blue());
+        uint s2Random = (random() % 256) - 128;
+        uint s2Power = (s2.red() * s1.green() * (uint(s2.level()) + 1)**2) + (s2Random * s2.red())
+                        + (s2.green() * s1.blue() * (uint(s2.level()) + 1)**2) + (s2Random * s2.green())
+                        + (s2.blue() * s1.red() * (uint(s2.level()) + 1)**2) + (s2Random * s2.blue());
+        return s1Power > s2Power;
     }
 
     function experienceForWin(uint8 thisLevel, uint8 otherLevel) private pure returns (uint24) {
@@ -238,6 +245,18 @@ contract CryptoShape {
        owner = shapeOwner;
        rgbColor = uint24(random() % 0xFFFFFF);
        baseContract = baseContractAddress;
+   }
+
+   function red() public view returns (uint) {
+       return uint((rgbColor & 0xFF0000) / (65536));
+   }
+
+   function green() public view returns (uint) {
+       return uint((rgbColor & 0x00FF00) / (256));
+   }
+
+   function blue() public view returns (uint) {
+       return uint(rgbColor & 0x0000FF);
    }
 
     function getExperience(uint24 amount) public restricted {
