@@ -1,11 +1,13 @@
 const { address } = require('../deployed_main_contract.json');
 const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
 const Shape = require('./shape');
+const EventEmitter = require('eventemitter3');
 
 useWeb3(require('../web3/rinkeby'));
 
 var web3;
 var mainContract;
+var emitter = new EventEmitter();
 
 function useWeb3(newWeb3, addressOverride) {
 	Shape.useWeb3(newWeb3);
@@ -26,28 +28,7 @@ function useWeb3(newWeb3, addressOverride) {
 "randomResolved"    has args (winnerShapeAddress, loserShapeAddress);
 */
 function on(eventKey, callback) {
-	switch (eventKey) {
-		case "shapeAdded":
-			// TODO
-			break;
-		case "challengePosted":
-			// TODO
-			break;
-		case "challengeResolved":
-			// TODO
-			break;
-		case "challengeRejected":
-			// TODO
-			break;
-		case "randomPosted":
-			// TODO
-			break;
-		case "randomResolved":
-			// TODO
-			break;
-		default:
-			throw new Error("Unrecognized event type: " + eventKey);
-	}
+	emitter.on(eventKey, callback);
 }
 
 module.exports = {
