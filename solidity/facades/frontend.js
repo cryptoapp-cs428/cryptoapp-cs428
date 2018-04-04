@@ -103,19 +103,18 @@ module.exports = function(web3, addressOverride) {
 				from: fromAddress
 			}, callback);
 		},
-		getShapeCount: function() {
-			return mainContract.methods.getShapes().call().then(function(shapes) {
-				return shapes.length;
-			});
-		},
 		buyShape: buyShape,
-		animalIndexToOwner: function() {
-			return Promise.resolve(null);
-		},
-		getUserAnimals: function() {
-			return Promise.resolve([]);
-		},
+
+		postRandom: stub,
+		postChallenge: stub,
+		acceptChallenge: stub,
+		rejectChallenge: stub,
+
 		// Exported for testing:
 		_eventToJson: _eventToJson
 	};
+
+	function stub() {
+		return Promise.resolve();
+	}
 };

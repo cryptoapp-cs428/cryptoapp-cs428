@@ -51,18 +51,6 @@ describe("Frontend Solidity API", () => {
 			assert.equal(addr, user);
 		});
 	});
-	describe("getShapeCount()", () => {
-		beforeEach(async () => {
-			// Deploy two shapes
-			await deployShapeFrom(user);
-			await deployShapeFrom(otherUser);
-		});
-
-		it("should return the number of shapes in the blockchain", async () => {
-			const count = await frontendAPI.getShapeCount();
-			assert.equal(count, 2);
-		});
-	});
 
 	describe("buyShape()", () => {
 		it("should return a valid address", async () => {
