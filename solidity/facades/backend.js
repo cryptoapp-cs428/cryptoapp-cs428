@@ -1,31 +1,19 @@
 const { address } = require('../deployed_main_contract.json');
 const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
-const mockData = require('./_mockData.json');
 const Shape = require('./shape');
+const EventEmitter = require('eventemitter3');
+const { Router }= require('express');
 
-useWeb3(require('../web3/rinkeby'), require('../web3/rinkeby-ws'));
+useWeb3(require('../web3/rinkeby'));
 
-var web3, wsWeb3;
+var web3;
 var mainContract;
-var eventShapeAdded, eventChallengePosted, eventChallengeResolved, eventChallengeRejected, eventRandomPosted, eventRandomResolved;
+var emitter = new EventEmitter();
 
-function useWeb3(newWeb3, newWsWeb3) {
+function useWeb3(newWeb3, addressOverride) {
 	Shape.useWeb3(newWeb3);
 	web3 = newWeb3;
-	wsWeb3 = newWsWeb3;
-	mainContract = new web3.eth.Contract(mainABI, address);
-	// mainContract = MainContract.at(address);
-	getEvents();
-}
-
-function getEvents() {
-	const wsMainContract = new wsWeb3.eth.Contract(mainABI, address);
-	eventShapeAdded = wsMainContract.events.ShapeAdded({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengePosted = wsMainContract.events.ChallengePosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeResolved = wsMainContract.events.ChallengeResolved({}, {fromBlock: 0, toBlock: 'latest'});
-	eventChallengeRejected = wsMainContract.events.ChallengeRejected({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomPosted = wsMainContract.events.RandomPosted({}, {fromBlock: 0, toBlock: 'latest'});
-	eventRandomResolved = wsMainContract.events.RandomResolved({}, {fromBlock: 0, toBlock: 'latest'});
+	mainContract = new web3.eth.Contract(mainABI, addressOverride || address);
 }
 
 /* on(eventKey, callback) Example usage:
@@ -41,57 +29,31 @@ function getEvents() {
 "randomResolved"    has args (winnerShapeAddress, loserShapeAddress);
 */
 function on(eventKey, callback) {
-	switch (eventKey) {
-		case "shapeAdded":
-			eventShapeAdded.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.shapeAddress, result.args.owner);
-				}
-			});
-			break;
-		case "challengePosted":
-			eventChallengePosted.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape);
-				}
-			});
-			break;
-		case "challengeResolved":
-			eventChallengeResolved.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape, result.args.sourceWon);
-				}
-			});
-			break;
-		case "challengeRejected":
-			eventChallengeRejected.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape);
-				}
-			});
-			break;
-		case "randomPosted":
-			eventRandomPosted.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.shapeAddress);
-				}
-			});
-			break;
-		case "randomResolved":
-			eventRandomResolved.on('data', function(error, result) {
-				if (!error) {
-					callback(result.args.winnerShapeAddress, result.args.loserShapeAddress);
-				}
-			});
-			break;
-		default:
-			break;
-	}
+	emitter.on(eventKey, callback);
+}
+
+/**
+ * Returns an Express Router that should be attached at the application root
+ * with app.use(backendAPI.getEndpoint()).
+ * @return {Express.Router} The router representing the solidty api endpoint
+ */
+function getEndpoint() {
+	var router = Router();
+	router.post('/validateEvent', function(req, res) {
+		var eventData = req.body;
+		var valid = true;
+		// TODO: validate event
+		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
+			.json({ valid });
+	});
+	return router;
 }
 
 module.exports = {
 	// Include Shape class for reference
 	Shape,
+
+	getEndpoint,
 
 	async getAllShapes(){
 		return [];

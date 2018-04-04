@@ -1,8 +1,39 @@
 require('../scripts/compile');
 const assert = require('assert');
 const backendFacade = require('../facades/backend');
+const web3 = require('../web3/ganache');
+const wsWeb3 = web3;
 
-// backendFacade.useWeb3(require('../web3/ganache'));
+const Main = require('../build/CryptoShapeMain_full.json');
+const abi = Main['interface'];
+const bytecode = Main['bytecode'];
+
+var mainContract,
+	accts,
+	deployer,
+	user1;
+beforeEach(async function() {
+	this.timeout(60000);
+	// Get list of accts
+	accts = await web3.eth.getAccounts();
+	deployer = accts[0];
+	user1 = accts[1];
+	// Use acct to deploy contract
+	mainContract = await new web3.eth.Contract(JSON.parse(abi))
+		.deploy({
+			data: bytecode
+		})
+		.send({
+			from: deployer,
+			gas: '6000000'
+		});
+	assert.ok(mainContract.options.address);
+
+	backendFacade.useWeb3(web3, wsWeb3, mainContract.options.address);
+});
+
+//======================================================================
+//			Test cases:
 
 describe("Backend facade", () => {
 	it("has a resolveRandomMatch function", () => {
@@ -21,4 +52,4 @@ describe("Backend facade", () => {
 			}).then(done);
 		});
 	});
-});
+}).timeout(20000);

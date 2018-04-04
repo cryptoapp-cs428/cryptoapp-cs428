@@ -1,8 +1,8 @@
-const web3 = require('./web3/rinkeby');
+const web3 = require('../web3/rinkeby');
 const fs = require('fs-extra');
 const path = require('path');
 
-const contractPath = path.resolve(__dirname, './build/Main_full.json');
+const contractPath = path.resolve(__dirname, '../build/CryptoShapeMain_full.json');
 
 // Make sure compiled output is on disk
 if (!fs.existsSync(contractPath)) {
@@ -37,7 +37,7 @@ const acctIdx = process.env.DEPLOY_ACCT_INDEX
 		})
 		.send({
 			from: acct,
-			gas: '1000000'
+			gas: '5000000'
 		})
 
 	const deployAddress = result.options.address;

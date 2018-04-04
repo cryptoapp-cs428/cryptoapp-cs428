@@ -15,13 +15,12 @@ const hasChanges = files
 	.map(f => path.resolve(contractsPath, f))
 	.map(p => fs.statSync(p).mtime > lastBuildTime)
 	.reduce((a, b) => a || b);
-if (hasChanges) {
-	removeBuildOutput();
-} else {
+if (!hasChanges) {
 	console.log(`No changes made to contracts since last build`);
 	return; // Stop executing
 }
 
+console.log("Loading compiler...");
 // This require takes a loong time so we do it down here to only do it if necessary
 const solc = require('solc');
 
@@ -32,7 +31,7 @@ for (let file of files) {
 	const src = fs.readFileSync(filePath, 'utf8');
 	const output = solc.compile(src, 1);
 
-	if (output.errors.length) {
+	if (output.errors && output.errors.length) {
 		output.errors.forEach(err => console.error(err));
 		if (!Object.keys(output.contracts).length) {
 			console.error(`Could not compile ${file}`);
@@ -46,6 +45,7 @@ for (let file of files) {
 const contractCount = Object.keys(contracts).length;
 if (contractCount) {
 	console.log(`Successfully compiled ${contractCount} contracts`);
+	removeBuildOutput();
 } else {
 	console.log('No contracts compiled');
 }

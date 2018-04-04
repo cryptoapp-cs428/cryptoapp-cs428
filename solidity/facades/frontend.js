@@ -10,15 +10,17 @@ module.exports = function(web3, addressOverride) {
 
 	const mainContract = new web3.eth.Contract(abi, addressOverride || address);
 
+	// Returns a promise for the default account, or the first account if no default is set
+	function getUserAccount() {
+		return web3.eth.defaultAccount
+			? Promise.resolve(web3.eth.defaultAccount)
+			:	web3.eth.getAccounts().then(function(accounts) {
+				return accounts[0];
+			});
+	};
+
 	return {
-		// Returns a promise for the default account, or the first account if no default is set
-		getUserAccount: function() {
-			return web3.eth.defaultAccount
-				? Promise.resolve(web3.eth.defaultAccount)
-				:	web3.eth.getAccounts().then(function(accounts) {
-					return accounts[0];
-				});
-		},
+		getUserAccount: getUserAccount,
 		personalSign: function(message, fromAddress, callback) {
 			// The web3.eth.sign method is broken for version 1.0.0 so
 			// here we use a workaround
@@ -32,7 +34,19 @@ module.exports = function(web3, addressOverride) {
 		getShapeCount: function() {
 			return mainContract.methods.getShapes().call().then(function(shapes) {
 				return shapes.length;
-			})
+			});
+		},
+		// returns Promise<shapeAddress: String>
+		buyShape: function() {
+			return getUserAccount().then(function(acct) {
+				return mainContract.methods.buyShape().send({
+					from: acct,
+					value: web3.utils.toWei('0.01', 'ether'),
+					gas: '3000000',
+				});
+			}).then(function(result) {
+				return result.events['ShapeAdded'].returnValues.shapeAddress;
+			});
 		},
 		animalIndexToOwner: function() {
 			return Promise.resolve(null);
@@ -41,4 +55,4 @@ module.exports = function(web3, addressOverride) {
 			return Promise.resolve([]);
 		},
 	};
-}
+};

@@ -13,7 +13,6 @@ contract CryptoShapeMain {
 
     /*** DATA TYPES ***/
 
-
     /*** CONSTANTS ***/
     /// @dev The price to purchase a new CryptoShape
     uint shapePrice = 0.01 ether;
@@ -140,8 +139,16 @@ contract CryptoShapeMain {
     }
 
     function resolveFight(CryptoShape s1, CryptoShape s2) private view returns (bool) {
-        // TODO
-        return random() % 2 == 0;
+        // Bright colors are more sensitive to the random component than dark colors
+        uint s1Random = (random() % 256) - 128;
+        uint s1Power = (s1.red() * s2.green() * (uint(s1.level()) + 1)**2) + (s1Random * s1.red())
+                        + (s1.green() * s2.blue() * (uint(s1.level()) + 1)**2) + (s1Random * s1.green())
+                        + (s1.blue() * s2.red() * (uint(s1.level()) + 1)**2) + (s1Random * s1.blue());
+        uint s2Random = (random() % 256) - 128;
+        uint s2Power = (s2.red() * s1.green() * (uint(s2.level()) + 1)**2) + (s2Random * s2.red())
+                        + (s2.green() * s1.blue() * (uint(s2.level()) + 1)**2) + (s2Random * s2.green())
+                        + (s2.blue() * s1.red() * (uint(s2.level()) + 1)**2) + (s2Random * s2.blue());
+        return s1Power > s2Power;
     }
 
     function experienceForWin(uint8 thisLevel, uint8 otherLevel) private pure returns (uint24) {
@@ -238,6 +245,18 @@ contract CryptoShape {
        owner = shapeOwner;
        rgbColor = uint24(random() % 0xFFFFFF);
        baseContract = baseContractAddress;
+   }
+
+   function red() public view returns (uint) {
+       return uint((rgbColor & 0xFF0000) / (65536));
+   }
+
+   function green() public view returns (uint) {
+       return uint((rgbColor & 0x00FF00) / (256));
+   }
+
+   function blue() public view returns (uint) {
+       return uint(rgbColor & 0x0000FF);
    }
 
     function getExperience(uint24 amount) public restricted {
