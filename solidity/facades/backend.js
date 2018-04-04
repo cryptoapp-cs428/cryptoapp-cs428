@@ -56,12 +56,18 @@ function _evTypeToKey(type) {
 function getEndpoint() {
 	var router = Router();
 	router.post('/validateEvent', function(req, res) {
-		var valid = _validateEvent(req.body);
-
-		if (valid) _emitEvent(req.body);
+		var ev = req.body;
+		var valid = _validateEvent(ev);
 
 		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
 			.json({ valid });
+
+		if (valid) {
+			// Defer this so it doesn't delay the response (or throw an error)
+			setTimeout(function() {
+				_emitEvent(ev);
+			});
+		}
 	});
 	return router;
 }
