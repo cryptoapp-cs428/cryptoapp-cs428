@@ -1,19 +1,16 @@
 const { address } = require('../deployed_main_contract.json');
 const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
-const mockData = require('./_mockData.json');
 const Shape = require('./shape');
 
-useWeb3(require('../web3/rinkeby'), require('../web3/rinkeby-ws'));
+useWeb3(require('../web3/rinkeby'));
 
-var web3, wsWeb3;
-var mainContract, wsMainContract;
+var web3;
+var mainContract;
 
-function useWeb3(newWeb3, newWsWeb3, addressOverride) {
+function useWeb3(newWeb3, addressOverride) {
 	Shape.useWeb3(newWeb3);
 	web3 = newWeb3;
-	wsWeb3 = newWsWeb3;
 	mainContract = new web3.eth.Contract(mainABI, addressOverride || address);
-	wsMainContract = new wsWeb3.eth.Contract(mainABI, addressOverride || address);
 }
 
 /* on(eventKey, callback) Example usage:
@@ -31,58 +28,22 @@ function useWeb3(newWeb3, newWsWeb3, addressOverride) {
 function on(eventKey, callback) {
 	switch (eventKey) {
 		case "shapeAdded":
-			wsMainContract.events.ShapeAdded({ fromBlock: 0 }, function(error, result) {
-				if (!error) {
-					callback(result.args.shapeAddress, result.args.owner);
-				} else {
-					console.error("Error in shapeAdded event", error);
-				}
-			});
+			// TODO
 			break;
 		case "challengePosted":
-			wsMainContract.events.ChallengePosted(function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape);
-				} else {
-					console.error("Error in challengePosted event", error);
-				}
-			});
+			// TODO
 			break;
 		case "challengeResolved":
-			wsMainContract.events.ChallengeResolved(function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape, result.args.sourceWon);
-				} else {
-					console.error("Error in challengeResolved event", error);
-				}
-			});
+			// TODO
 			break;
 		case "challengeRejected":
-			wsMainContract.events.ChallengeRejected(function(error, result) {
-				if (!error) {
-					callback(result.args.sourceShape, result.args.targetShape);
-				} else {
-					console.error("Error in challengeRejected event", error);
-				}
-			});
+			// TODO
 			break;
 		case "randomPosted":
-			wsMainContract.events.RandomPosted(function(error, result) {
-				if (!error) {
-					callback(result.args.shapeAddress);
-				} else {
-					console.error("Error in randomPosted event", error);
-				}
-			});
+			// TODO
 			break;
 		case "randomResolved":
-			wsMainContract.events.RandomResolved({ fromBlock: 0 }, function(error, result) {
-				if (!error) {
-					callback(result.args.winnerShapeAddress, result.args.loserShapeAddress);
-				} else {
-					console.error("Error in randomResolved event", error);
-				}
-			});
+			// TODO
 			break;
 		default:
 			throw new Error("Unrecognized event type: " + eventKey);
