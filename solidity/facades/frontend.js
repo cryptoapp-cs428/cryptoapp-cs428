@@ -30,16 +30,31 @@ module.exports = function(web3, addressOverride) {
 				value: web3.utils.toWei('0.01', 'ether'),
 				gas: '6000000',
 			});
-		}).then(function(result) {
-			var ev = _getEvent(result, 'ShapeAdded');
-			return _validateEvent(ev).then(function() {
-				return ev.returnValues.shapeAddress;
-			});
-		});
+		}).then(_validateAndReturn('ShapeAdded', 'shapeAddress'));
+		// These two strings correspond to this line in Main.sol:
+		//    event ShapeAdded(address shapeAddress, address owner);
 	}
 
 	//======================================================================
 	//			Private functions
+
+	/**
+	 * Creates a function that takes a transaction result, validates the event of
+	 * the given type, and then returns the value of the given parameter on that
+	 * event (all asynchronously).
+	 * @param       {String} eventName     The type of event to examine
+	 * @param       {String} parameterName The name of the parameter to return
+	 * @constructor
+	 * @return      {Function(TransactionResult)}
+	 */
+	function _validateAndReturn(eventName, parameterName) {
+		return function(result) {
+			var ev = _getEvent(result, eventName);
+			return _validateEvent(ev).then(function() {
+				return ev.returnValues[parameterName];
+			});
+		};
+	}
 
 	function _getEvent(result, eventName) {
 		// events[eventName] is sometimes an array, if there were multiple of that event. But there usually shouldn't be

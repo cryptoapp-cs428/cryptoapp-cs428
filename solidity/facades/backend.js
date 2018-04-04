@@ -42,6 +42,7 @@ function _emitEvent(ev) {
 	emitter.emit(_evTypeToKey(ev.type), ...values);
 }
 
+// Takes an event type (from the frontend) and converts it to theRightCaseForEventKeys
 function _evTypeToKey(type) {
 	// Make first char lowercase
 	return type.substring(0,1).toLowerCase() + type.substring(1);
