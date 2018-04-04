@@ -2,11 +2,20 @@ require('../scripts/compile');
 const assert = require('assert');
 const web3 = require('../web3/ganache');
 
+const {
+	setMainContract,
+	deployShapeFrom,
+	getContractForShape,
+	isChecksumAddress,
+	assertEach,
+
+	RANDOM_FIGHT_COST,
+	NOT_ENOUGH_FOR_RANDOM_FIGHT,
+} = require('./utils')(web3);
+
 const Main = require('../build/CryptoShapeMain_full.json');
 const abi = Main['interface'];
 const bytecode = Main['bytecode'];
-
-const shapeAbi = require('../facades/build_abis/CryptoShape_abi.json');
 
 let accts,
 	contract,
@@ -34,42 +43,9 @@ beforeEach(async function() {
 			});
 
 		contract.setProvider(web3.currentProvider);
+
+		setMainContract(contract);
 });
-
-//======================================================================
-//			Utility functions
-
-function toWei(val, unit) {
-	if (!unit) {
-		[val, unit] = val.split(/\s+/);
-	}
-	return web3.utils.toWei(val, unit);
-}
-
-function deployShapeFrom(acct) {
-	const prom = contract.methods.buyShape().send({
-		from: acct,
-		value: web3.utils.toWei('0.01', 'ether'),
-		gas: '6000000'
-	});
-	// Return utility to get address of shape
-	prom.andGetAddress = () => prom
-		.then(result => result.events['ShapeAdded'].returnValues.shapeAddress);
-	return prom;
-}
-
-function getContractForShape(addr) {
-	return new web3.eth.Contract(shapeAbi, addr);
-}
-
-const identity = x => x;
-const isChecksumAddress = a => web3.utils.isAddress(a) && web3.utils.checkAddressChecksum(a);
-const assertEach = (arr, f=identity) => arr.map(f)
-		.forEach((b, i) => assert(b, `el at ${i} failed assertion ${f.name || ''}`));
-
-// Some constants, too
-const randomFightCost = toWei('0.0001 ether');
-const notEnoughForARandomFight = toWei('0.00005 ether');
 
 //======================================================================
 //			Test cases
@@ -134,7 +110,7 @@ describe("Main contract", () => {
 			const entered2 = await shape1C.methods.awaitingRandomFight().call();
 			assert(!entered2);
 			await contract.methods.enterRandomFightPool(shape1).send({
-				value: randomFightCost,
+				value: RANDOM_FIGHT_COST,
 				from: user1,
 			});
 			const entered = await shape1C.methods.awaitingRandomFight().call();
@@ -143,36 +119,36 @@ describe("Main contract", () => {
 		it("should require the user to be the shape owner", async () => {
 			// Should fail:
 			await contract.methods.enterRandomFightPool(shape1).send({
-				value: randomFightCost,
+				value: RANDOM_FIGHT_COST,
 				from: user2,
 			}).then(assert.fail, assert.ok);
 		});
-		it("should require the user to pay at least [randomFightCost]", async () => {
+		it("should require the user to pay at least [RANDOM_FIGHT_COST]", async () => {
 			// Should fail:
 			await contract.methods.enterRandomFightPool(shape1).call({
-				value: notEnoughForARandomFight,
+				value: NOT_ENOUGH_FOR_RANDOM_FIGHT,
 				from: user2,
 			}).then(assert.fail, assert.ok);
 		});
 		it("should allow multiple users to enter the random pool", async () => {
 			await Promise.all([
 				contract.methods.enterRandomFightPool(shape1).send({
-					value: randomFightCost,
+					value: RANDOM_FIGHT_COST,
 					from: user1,
 				}),
 				contract.methods.enterRandomFightPool(shape2).send({
-					value: randomFightCost,
+					value: RANDOM_FIGHT_COST,
 					from: user2,
 				})
 			]);
 		});
 		it("should not allow the same shape to enter twice", async () => {
 			await contract.methods.enterRandomFightPool(shape1).send({
-				value: randomFightCost,
+				value: RANDOM_FIGHT_COST,
 				from: user1,
 			});
 			await contract.methods.enterRandomFightPool(shape1).send({
-				value: randomFightCost,
+				value: RANDOM_FIGHT_COST,
 				from: user1,
 			}).then(
 				() => assert.fail("Shape entered multiple times"),
