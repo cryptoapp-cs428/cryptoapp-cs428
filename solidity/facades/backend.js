@@ -72,15 +72,19 @@ function getEndpoint() {
 	return router;
 }
 
+function getAllShapes() {
+	return mainContract.methods.getShapes().call().then(function(addrs) {
+		return addrs.map(addr => new Shape(addr));
+	});
+}
+
 module.exports = {
 	// Include Shape class for reference
 	Shape,
 
 	getEndpoint,
 
-	async getAllShapes(){
-		return [];
-	},
+	getAllShapes,
 	async resolveRandomMatch(shapeID1, shapeID2) {
 		// Stub function, does nothing yet
 	},
@@ -88,5 +92,6 @@ module.exports = {
 	useWeb3,
 
 	// Exported for testing
-	_evTypeToKey
+	_evTypeToKey,
+	_emitEvent,
 };

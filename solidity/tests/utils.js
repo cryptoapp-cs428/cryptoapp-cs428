@@ -19,6 +19,7 @@ module.exports = function(web3) {
 	}
 
 	function deployShapeFrom(acct) {
+		assert.ok(acct);
 		const prom = contract.methods.buyShape().send({
 			from: acct,
 			value: web3.utils.toWei('0.01', 'ether'),
