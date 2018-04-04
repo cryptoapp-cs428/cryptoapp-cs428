@@ -41,6 +41,7 @@ app.use([
     bodyParser.urlencoded({ extended: true }),
     cookieParser()
 ]);
+app.use(solidityAPI.getEndpoint());
 
 
 // Import mysql models

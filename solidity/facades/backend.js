@@ -2,6 +2,7 @@ const { address } = require('../deployed_main_contract.json');
 const mainABI = require('./build_abis/CryptoShapeMain_abi.json');
 const Shape = require('./shape');
 const EventEmitter = require('eventemitter3');
+const { Router }= require('express');
 
 useWeb3(require('../web3/rinkeby'));
 
@@ -31,9 +32,28 @@ function on(eventKey, callback) {
 	emitter.on(eventKey, callback);
 }
 
+/**
+ * Returns an Express Router that should be attached at the application root
+ * with app.use(backendAPI.getEndpoint()).
+ * @return {Express.Router} The router representing the solidty api endpoint
+ */
+function getEndpoint() {
+	var router = Router();
+	router.post('/validateEvent', function(req, res) {
+		var eventData = req.body;
+		var valid = true;
+		// TODO: validate event
+		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
+			.json({ valid });
+	});
+	return router;
+}
+
 module.exports = {
 	// Include Shape class for reference
 	Shape,
+
+	getEndpoint,
 
 	async getAllShapes(){
 		return [];
