@@ -1,5 +1,6 @@
 require('../scripts/compile');
 const assert = require('assert');
+const fetchMock = require('fetch-mock');
 const web3 = require('../web3/ganache');
 
 const frontendAPIFactory = require('../facades/frontend');
@@ -16,6 +17,11 @@ var accts,
 	otherUser;
 
 beforeEach(async () => {
+		global.fetch = fetchMock.sandbox();
+		fetch.post('/validateEvent', function(__url, __req) {
+			return JSON.stringify({ valid: true });
+		});
+
 		// Get list of accts
 		accts = await web3.eth.getAccounts();
 
@@ -25,7 +31,7 @@ beforeEach(async () => {
 
 		var sendOpts = {
 			from: deployer,
-			gas: '3000000'
+			gas: '6000000'
 		};
 
 		// Use acct to deploy mainContract
@@ -70,6 +76,22 @@ describe("Frontend Solidity API", () => {
 			frontendAPI.personalSign("Potato", accts[1], function(err, data) {
 				// personal_sign isn't actually supported by ganace, so this is the best we can do.
 				done();
+			});
+		});
+	});
+
+	describe("private utilities", () => {
+		describe("_eventToJson()", () => {
+			it("should only get the numbered properties of returnValues", async () => {
+				var json = frontendAPI._eventToJson({
+					returnValues: {
+						"0": "Potato",
+						"1": "Bagel",
+						"potato": "Potato",
+						"bagel": "Bagel",
+					}
+				});
+				assert.deepEqual(json, [ "Potato", "Bagel" ]);
 			});
 		});
 	});
