@@ -32,9 +32,13 @@ function on(eventKey, callback) {
 	emitter.on(eventKey, callback);
 }
 
-function validateEvent(eventData) {
+function _validateEvent(ev) {
 	// TODO: validate event
 	return true;
+}
+
+function _emitEvent(ev) {
+	emitter.emit(ev.type, ...ev.values);
 }
 
 /**
@@ -45,7 +49,10 @@ function validateEvent(eventData) {
 function getEndpoint() {
 	var router = Router();
 	router.post('/validateEvent', function(req, res) {
-		var valid = validateEvent(req.body);
+		var valid = _validateEvent(req.body);
+
+		if (valid) _emitEvent(req.body);
+
 		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
 			.json({ valid });
 	});

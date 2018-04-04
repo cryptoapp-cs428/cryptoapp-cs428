@@ -62,13 +62,16 @@ module.exports = function(web3, addressOverride) {
 	}
 
 	function _eventToJson(ev) {
-		var json = [];
+		var values = [];
 		var i = 0;
 		while ( ev.returnValues[i] !== undefined ) {
-			json[i] = ev.returnValues[i];
+			values[i] = ev.returnValues[i];
 			i++;
 		}
-		return json;
+		return {
+			type: ev.event,
+			values: values,
+		};
 	}
 
 	//======================================================================

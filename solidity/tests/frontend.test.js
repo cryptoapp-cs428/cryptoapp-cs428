@@ -82,8 +82,9 @@ describe("Frontend Solidity API", () => {
 
 	describe("private utilities", () => {
 		describe("_eventToJson()", () => {
-			it("should only get the numbered properties of returnValues", async () => {
+			it("should have the right structure", async () => {
 				var json = frontendAPI._eventToJson({
+					event: "TwoFoods",
 					returnValues: {
 						"0": "Potato",
 						"1": "Bagel",
@@ -91,7 +92,10 @@ describe("Frontend Solidity API", () => {
 						"bagel": "Bagel",
 					}
 				});
-				assert.deepEqual(json, [ "Potato", "Bagel" ]);
+				assert.deepEqual(json, {
+					type: "TwoFoods",
+					values: [ "Potato", "Bagel" ],
+				});
 			});
 		});
 	});
