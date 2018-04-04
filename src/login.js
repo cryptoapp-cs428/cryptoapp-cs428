@@ -88,7 +88,7 @@ class Login extends Component {
     }
 
     reattemptLogin = () => {
-        this.setState({ loading: true })
+        this.setState({ loading: true });
         this.loadWalletDetails();
     }
 
@@ -100,7 +100,7 @@ class Login extends Component {
 
     render() {
         if (this.state.loading) {
-            return <img alt="" src="images/loading.gif" />
+            return <img alt="" src="images/loading.gif" />;
         } else {
             return (<div class="major">
                         <ul class="actions">
