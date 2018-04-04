@@ -38,7 +38,13 @@ function _validateEvent(ev) {
 }
 
 function _emitEvent(ev) {
-	emitter.emit(ev.type, ...ev.values);
+	const values = ev.values || [];
+	emitter.emit(_evTypeToKey(ev.type), ...values);
+}
+
+function _evTypeToKey(type) {
+	// Make first char lowercase
+	return type.substring(0,1).toLowerCase() + type.substring(1);
 }
 
 /**
@@ -73,4 +79,7 @@ module.exports = {
 	},
 	on,
 	useWeb3,
+
+	// Exported for testing
+	_evTypeToKey
 };

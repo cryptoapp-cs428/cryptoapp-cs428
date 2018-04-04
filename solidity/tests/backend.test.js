@@ -52,4 +52,13 @@ describe("Backend facade", () => {
 			}).then(done);
 		});
 	});
+
+	describe("private utilities", () => {
+		describe("_evTypeToKey", () => {
+			it("should lowercase the first letter", async () => {
+				assert.equal(backendFacade._evTypeToKey("Potato"), "potato");
+				assert.equal(backendFacade._evTypeToKey("PotatoEaten"), "potatoEaten");
+			});
+		});
+	});
 }).timeout(20000);
