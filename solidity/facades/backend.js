@@ -32,6 +32,11 @@ function on(eventKey, callback) {
 	emitter.on(eventKey, callback);
 }
 
+function validateEvent(eventData) {
+	// TODO: validate event
+	return true;
+}
+
 /**
  * Returns an Express Router that should be attached at the application root
  * with app.use(backendAPI.getEndpoint()).
@@ -40,9 +45,7 @@ function on(eventKey, callback) {
 function getEndpoint() {
 	var router = Router();
 	router.post('/validateEvent', function(req, res) {
-		var eventData = req.body;
-		var valid = true;
-		// TODO: validate event
+		var valid = validateEvent(req.body);
 		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
 			.json({ valid });
 	});
