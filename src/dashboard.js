@@ -47,7 +47,7 @@ class Dashboard extends Component {
     }
 
     logOut() {
-        console.log('logOut..')
+        console.log('logOut..');
 
         fetch('logout', {
             method: 'get',

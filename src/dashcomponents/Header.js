@@ -26,6 +26,6 @@ const Header = () => {
 			<NavBar />
 		</div>
 	);
-}
+};
 
 export default Header;
