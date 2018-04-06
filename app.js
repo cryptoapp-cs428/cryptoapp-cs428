@@ -742,13 +742,42 @@ models.sequelize.sync().then(function() {
 
     // Fake data
 
+    // Only run this when you want to write some dummy data.
     if(false) {
         models.Shape.create({
-            ethAddress: "0x001",
-            userEthAddress: "0x00a",
-            color: 2541,
-            experience: 1,
+            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC01",
+            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
+            color: 0xff0000,
+            experience: 10,
+            level: 1,
+            seekingRandom: false
+        }).then(newShape => {
+
+        }).catch(err => {
+            console.log(err);
+        });
+
+
+        models.Shape.create({
+            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC02",
+            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
+            color: 0x00ff00,
+            experience: 20,
             level: 2,
+            seekingRandom: false
+        }).then(newShape => {
+
+        }).catch(err => {
+            console.log(err);
+        });
+
+
+        models.Shape.create({
+            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC03",
+            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
+            color: 0x0000ff,
+            experience: 30,
+            level: 3,
             seekingRandom: false
         }).then(newShape => {
 
