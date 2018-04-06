@@ -83,8 +83,8 @@ const createUser = (req, res, ethAddress, signature, cb) => {
 
     // Check if user exists
     models.User.findAndCountAll({
-            where: { ethAddress: ethAddress }
-        })
+        where: { ethAddress: ethAddress }
+    })
         .then(result => {
 
             console.log(222);
@@ -245,16 +245,16 @@ app.get('/shapes', (req, res) => {
     console.log("");
     console.log('Get Shapes..');
 
-    authenticateRequest((req, res, user => {
-        models.Shape.findAll({
-                where: {
-                    userEthAddress: user.ethAddress,
-                }
-            })
-            .then(function(shapesRaw) {
-                return res.status(200).send(shapesRaw);
-            })
-    }));
+    //authenticateRequest((req, res, user => {
+    models.Shape.findAll({
+        //where: {
+        //userEthAddress: user.ethAddress,
+        //}
+    })
+        .then(function(shapesRaw) {
+            return res.status(200).send(shapesRaw);
+        });
+    //}));
 });
 
 
@@ -267,12 +267,12 @@ app.get('/opponents', (req, res) => {
 
     authenticateRequest((req, res, user => {
         models.Shape.findAll({
-                where: {
-                    [models.Sequelize.Op.not]: [
-                        { userEthAddress: user.ethAddress, }
-                    ]
-                }
-            })
+            where: {
+                [models.Sequelize.Op.not]: [
+                    { userEthAddress: user.ethAddress, }
+                ]
+            }
+        })
             .then(function(opponentsRaw) {
                 return res.status(200).send(opponentsRaw)
             })
@@ -288,13 +288,13 @@ app.get('/battles/challenged', (req, res) => {
 
     authenticateRequest((req, res, user => {
         models.Battle.findAll({
-                where: {
-                    [models.Sequelize.Op.and]: [
-                        { userEthAddressTarget: user.ethAddress },
-                        { pendingTargetResponse: true },
-                    ],
-                }
-            })
+            where: {
+                [models.Sequelize.Op.and]: [
+                    { userEthAddressTarget: user.ethAddress },
+                    { pendingTargetResponse: true },
+                ],
+            }
+        })
             .then(function(battlesRaw) {
                 return res.status(200).send(battlesRaw)
             })
@@ -311,13 +311,13 @@ app.get('/battles/pending', (req, res) => {
 
     authenticateRequest((req, res, user => {
         models.Battle.findAll({
-                where: {
-                    [models.Sequelize.Op.and]: [
-                        { userEthAddressSource: user.ethAddress },
-                        { pendingTargetResponse: true },
-                    ],
-                }
-            })
+            where: {
+                [models.Sequelize.Op.and]: [
+                    { userEthAddressSource: user.ethAddress },
+                    { pendingTargetResponse: true },
+                ],
+            }
+        })
             .then(function(battlesRaw) {
                 return res.status(200).send(battlesRaw)
             })
@@ -334,16 +334,16 @@ app.get('/battles/history', (req, res) => {
     authenticateRequest((req, res, user => {
 
         models.Battle.findAll({
-                where: {
-                    [models.Sequelize.Op.or]: [
-                        { userEthAddressSource: user.ethAddress },
-                        { userEthAddressSource: user.ethAddress }
-                    ],
-                    [models.Sequelize.Op.and]: [
-                        { pendingTargetResponse: false }
-                    ]
-                }
-            })
+            where: {
+                [models.Sequelize.Op.or]: [
+                    { userEthAddressSource: user.ethAddress },
+                    { userEthAddressSource: user.ethAddress }
+                ],
+                [models.Sequelize.Op.and]: [
+                    { pendingTargetResponse: false }
+                ]
+            }
+        })
             .then(function(battlesRaw) {
                 return res.status(200).send(battlesRaw)
             })
@@ -383,10 +383,10 @@ app.get('/battles', (req, res) => {
 
     authenticateRequest(req, res, user => {
         models.Battle.findAll({
-                where: {
-                    userEthAddressSource: user.ethAddress
-                }
-            })
+            where: {
+                userEthAddressSource: user.ethAddress
+            }
+        })
             .then(function(battlesRaw) {
                 return res.status(200).send(battlesRaw);
             });
@@ -737,5 +737,25 @@ models.sequelize.sync().then(function() {
         console.log('║ HTTP Started Port ' + httpPort + ' ║');
         console.log('╚════════════════════════╝');
     });
+
+
+
+    // Fake data
+
+    if(false) {
+        models.Shape.create({
+            ethAddress: "0x001",
+            userEthAddress: "0x00a",
+            color: 2541,
+            experience: 1,
+            level: 2,
+            seekingRandom: false
+        }).then(newShape => {
+
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
 
 });
