@@ -32,6 +32,22 @@ function on(eventKey, callback) {
 	emitter.on(eventKey, callback);
 }
 
+function _validateEvent(ev) {
+	// TODO: validate event
+	return true;
+}
+
+function _emitEvent(ev) {
+	const values = ev.values || [];
+	emitter.emit(_evTypeToKey(ev.type), ...values);
+}
+
+// Takes an event type (from the frontend) and converts it to theRightCaseForEventKeys
+function _evTypeToKey(type) {
+	// Make first char lowercase
+	return type.substring(0,1).toLowerCase() + type.substring(1);
+}
+
 /**
  * Returns an Express Router that should be attached at the application root
  * with app.use(backendAPI.getEndpoint()).
@@ -40,13 +56,26 @@ function on(eventKey, callback) {
 function getEndpoint() {
 	var router = Router();
 	router.post('/validateEvent', function(req, res) {
-		var eventData = req.body;
-		var valid = true;
-		// TODO: validate event
+		var ev = req.body;
+		var valid = _validateEvent(ev);
+
 		res.status(valid ? 200 : 409) // 409: CONFLICT (client error)
 			.json({ valid });
+
+		if (valid) {
+			// Defer this so it doesn't delay the response (or throw an error)
+			setTimeout(function() {
+				_emitEvent(ev);
+			});
+		}
 	});
 	return router;
+}
+
+function getAllShapes() {
+	return mainContract.methods.getShapes().call().then(function(addrs) {
+		return addrs.map(addr => new Shape(addr));
+	});
 }
 
 module.exports = {
@@ -55,12 +84,14 @@ module.exports = {
 
 	getEndpoint,
 
-	async getAllShapes(){
-		return [];
-	},
+	getAllShapes,
 	async resolveRandomMatch(shapeID1, shapeID2) {
 		// Stub function, does nothing yet
 	},
 	on,
 	useWeb3,
+
+	// Exported for testing
+	_evTypeToKey,
+	_emitEvent,
 };

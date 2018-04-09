@@ -1,5 +1,6 @@
 require('../scripts/compile');
 const assert = require('assert');
+const fetchMock = require('fetch-mock');
 const web3 = require('../web3/ganache');
 
 const frontendAPIFactory = require('../facades/frontend');
@@ -16,6 +17,11 @@ var accts,
 	otherUser;
 
 beforeEach(async () => {
+		global.fetch = fetchMock.sandbox();
+		fetch.post('/validateEvent', function(__url, __req) {
+			return JSON.stringify({ valid: true });
+		});
+
 		// Get list of accts
 		accts = await web3.eth.getAccounts();
 
@@ -25,7 +31,7 @@ beforeEach(async () => {
 
 		var sendOpts = {
 			from: deployer,
-			gas: '3000000'
+			gas: '6000000'
 		};
 
 		// Use acct to deploy mainContract
@@ -45,18 +51,6 @@ describe("Frontend Solidity API", () => {
 			assert.equal(addr, user);
 		});
 	});
-	describe("getShapeCount()", () => {
-		beforeEach(async () => {
-			// Deploy two shapes
-			await deployShapeFrom(user);
-			await deployShapeFrom(otherUser);
-		});
-
-		it("should return the number of shapes in the blockchain", async () => {
-			const count = await frontendAPI.getShapeCount();
-			assert.equal(count, 2);
-		});
-	});
 
 	describe("buyShape()", () => {
 		it("should return a valid address", async () => {
@@ -70,6 +64,26 @@ describe("Frontend Solidity API", () => {
 			frontendAPI.personalSign("Potato", accts[1], function(err, data) {
 				// personal_sign isn't actually supported by ganace, so this is the best we can do.
 				done();
+			});
+		});
+	});
+
+	describe("private utilities", () => {
+		describe("_eventToJson()", () => {
+			it("should have the right structure", async () => {
+				var json = frontendAPI._eventToJson({
+					event: "TwoFoods",
+					returnValues: {
+						"0": "Potato",
+						"1": "Bagel",
+						"potato": "Potato",
+						"bagel": "Bagel",
+					}
+				});
+				assert.deepEqual(json, {
+					type: "TwoFoods",
+					values: [ "Potato", "Bagel" ],
+				});
 			});
 		});
 	});
