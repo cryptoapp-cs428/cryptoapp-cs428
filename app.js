@@ -127,7 +127,13 @@ const createUser = (req, res, ethAddress, signature, cb) => {
 
 
 const authenticateRequest = (req, res, cb) => {
+    console.dir("-----ENTRY------")
+    console.dir(req.body.token)
+    console.dir(req.query.token)
+    console.dir(req.headers['x-access-token'])
+    console.dir(req.cookies.token)
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
+    console.dir("-----EXIT------")
 
     // Check if token exists
     if (!token) {
@@ -242,15 +248,14 @@ app.get('/logout', (req, res) => {
  * Returns all the shapes owned by the current user
  */
 app.get('/shapes', (req, res) => {
-    console.log("");
     console.log('Get Shapes..');
 
     //authenticateRequest((req, res, user => {
-    models.Shape.findAll({
-        //where: {
-        //userEthAddress: user.ethAddress,
-        //}
-    })
+        models.Shape.findAll({
+            // where: {
+            //     userEthAddress: user.ethAddress,
+            // }
+        })
         .then(function(shapesRaw) {
             return res.status(200).send(shapesRaw);
         });
@@ -775,6 +780,18 @@ models.sequelize.sync().then(function() {
         models.Shape.create({
             ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC03",
             userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
+            color: 0x0000ff,
+            experience: 30,
+            level: 3,
+            seekingRandom: false
+        }).then(newShape => {
+
+        }).catch(err => {
+            console.log(err);
+        });
+        models.Shape.create({
+            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC03",
+            userEthAddress: "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
             color: 0x0000ff,
             experience: 30,
             level: 3,

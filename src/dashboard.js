@@ -22,8 +22,7 @@ class Dashboard extends Component {
     }
 
     loadUserData() {
-        console.log('loadUserData..');
-
+        var that = this;
         fetch('user', {
             method: 'get',
             credentials: 'include',
@@ -31,11 +30,11 @@ class Dashboard extends Component {
         }).then(function(response) {
             return response.json();
         }).then(function(json) {
-            console.log(json);
+            console.log("user data", json);
 
-            this.setState({ email: json.email });
-            this.setState({ name: json.name });
-            this.setState({ ethAddress: json.ethAddress });
+            that.setState({ email: json.email });
+            that.setState({ name: json.name });
+            that.setState({ ethAddress: json.ethAddress });
 
         }).catch(function(err) {
             console.log(err);
