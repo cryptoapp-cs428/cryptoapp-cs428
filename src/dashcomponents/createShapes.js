@@ -188,28 +188,29 @@ const utility = {
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
 
-      var canv = document.createElement("canvas");
-      canv.width = 200;
-      canv.height = 200;
-      var ctx = canv.getContext("2d");
+      // var canv = document.createElement("canvas");
+      // canv.width = 200;
+      // canv.height = 200;
 
+      //var ctx = canv.getContext("2d");
       //document.getElementById("container").appendChild(canv);
 
       switch (lines) {
         case 0:
         this.fillArea(ctx, 75, 15, color);
+        // this.triangle(ctx, 80, 50, 75, 15, color);
           break;
         case 1:
-        ctx.triangle(ctx, 80, 50, 75, 75, color);
+        this.triangle(ctx, 80, 50, 75, 75, color);
         ctx.fill();
         ctx.stroke();
           break;
         case 2:
-        ctx.fillArea(ctx, 75, 75, color);
+        this.fillArea(ctx, 75, 75, color);
           break;
         case 3:
         console.log("PENTAGON");
-        ctx.pentagon(ctx, 80, 50, 75, 75, color);
+        this.pentagon(ctx, 80, 50, 75, 75, color);
         ctx.fill();
         ctx.stroke();
           break;
