@@ -16,7 +16,9 @@ class ShapeRow extends Component {
         console.log("the canvas", canvas);
         if (canvas.getContext) {
             var ctx = canvas.getContext("2d");
-            utility.createShape(ctx, this.state.shape.ethAddress);
+            console.log(this.state.shape.color);
+            console.log(this.state.shape.color.toString(16));
+            utility.createShape(ctx, this.state.shape.ethAddress, (this.state.shape.color).toString(16), this.state.shape.level);
         }
         else {
             alert('This browser does not support HTML5 canvas.');
@@ -42,9 +44,9 @@ class PlayerShapes extends Component {
             ethAddress: props.ethAddress,
             name: props.name,
             email: props.email,
-            shapes: [{ethAddress:"0xaaaaaaaaaaaaaaaaa1234"}]
+            shapes: []
         };
-        //this.loadShapes();
+        this.loadShapes();
     }
 
     addShape() {

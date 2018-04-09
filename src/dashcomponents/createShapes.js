@@ -173,17 +173,18 @@ const utility = {
       ctx.putImageData(image, 0, 0);
     },
 
-    createShape: function(ctx, value) {
+    createShape: function(ctx, value, color, level) {
       if (!value){
         //value = '99ad7768f2aa9a1964d6812ke55m1gkr2d7o6719d96ne2gg';
         value = (Math.floor(Math.random() * 16)).toString(16).toUpperCase() + getRandomColor() + 'aaa';
         console.log(value);
       }
-      var color = '#' + value.substring(1, 7);
+      // var color = '#' + value.substring(2, 8);
 
       console.log(color);
-      var lines = getNumberSize(value);
 
+      color = color.padStart(6, "0");
+      color = "#" + color;
       ctx.fillStyle = color;
       ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
@@ -195,26 +196,30 @@ const utility = {
       //var ctx = canv.getContext("2d");
       //document.getElementById("container").appendChild(canv);
 
-      switch (lines) {
-        case 0:
+      switch (level) {
+        case 1:
         this.fillArea(ctx, 75, 15, color);
         // this.triangle(ctx, 80, 50, 75, 15, color);
           break;
-        case 1:
-        this.triangle(ctx, 80, 50, 75, 75, color);
+        case 2:
+        this.triangle(ctx, 3 , 3, 75, 75, color);
         ctx.fill();
         ctx.stroke();
           break;
-        case 2:
+        case 3:
         this.fillArea(ctx, 75, 75, color);
           break;
-        case 3:
+        case 4:
         console.log("PENTAGON");
-        this.pentagon(ctx, 80, 50, 75, 75, color);
+        this.pentagon(ctx, 35, 35, 75, 75, color);
         ctx.fill();
         ctx.stroke();
           break;
         default:
+        console.log("PENTAGON");
+        this.pentagon(ctx, 80, 50, 75, 75, color);
+        ctx.fill();
+        ctx.stroke();
 
       }
     }
