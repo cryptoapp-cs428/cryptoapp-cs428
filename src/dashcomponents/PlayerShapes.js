@@ -77,7 +77,7 @@ class PlayerShapes extends Component {
     // use arrow function here so that the this value is bound correctly
     infoTableRow = (variable) => {
         // get uppercase version of variable
-        let upper = variable && variable[0].toUpperCase() + variable.slice(1);
+        var upper = variable && variable[0].toUpperCase() + variable.slice(1);
 
         if (this.state[variable]) {
             return (
