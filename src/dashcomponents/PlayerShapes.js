@@ -1,37 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import utility from "./createShapes";
-
-class ShapeRow extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            shape: props.shape
-        };
-    }
-
-    componentDidMount() {
-        var canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
-        if (canvas.getContext) {
-            var ctx = canvas.getContext("2d");
-            utility.createShape(ctx, this.state.shape.ethAddress, (this.state.shape.color).toString(16), this.state.shape.level);
-        }
-        else {
-            alert('This browser does not support HTML5 canvas.');
-        }
-    }
-
-    render() {
-        return (
-            <tr>
-                <td>
-                    <canvas id={this.state.shape.ethAddress} ref="myCanvas" width="100" style={{color: "#FF0000"}} height="100"></canvas>
-                </td>
-                <td> {this.state.shape.ethAddress}</td>
-            </tr>
-            );
-    }
-}
+import ShapeRow from './ShapeRow';
 
 class PlayerShapes extends Component {
     constructor(props) {
