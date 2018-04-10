@@ -8,7 +8,6 @@ class ShapeRow extends Component {
         this.state = {
             shape: props.myshape
         };
-        console.log("got shape", this.state);
     }
 
     componentDidMount() {
@@ -26,7 +25,6 @@ class ShapeRow extends Component {
     }
 
     render() {
-        console.log("rendering shape row");
         return (
             <tr>
                 <td>
@@ -46,6 +44,7 @@ class PlayerShapes extends Component {
             email: props.email,
             shapes: []
         };
+        console.log(this.state);
         this.loadShapes();
     }
 
@@ -53,11 +52,7 @@ class PlayerShapes extends Component {
         console.log('addShape..');
     }
 
-    componentDidMount() {
-        this.state.shapes.forEach((shape) => {
-
-        });
-    }
+    componentDidMount() {}
 
     loadShapes() {
         console.log('loading shape Data...');
@@ -78,6 +73,25 @@ class PlayerShapes extends Component {
         });
     }
 
+    // Some properties in the database are not actually stored
+    // use arrow function here so that the this value is bound correctly
+    infoTableRow = (variable) => {
+        // get uppercase version of variable
+        let upper = variable && variable[0].toUpperCase() + variable.slice(1);
+
+        if (this.state[variable]) {
+            return (
+                <tr>
+                    <td><b>{upper}</b></td>
+                    <td><b id={this.state[variable]}>{this.state[variable]}</b></td>
+                </tr>);
+        }
+        else {
+            // jsx element won't render
+            return null;
+        }
+    }
+
     render() {
         return (
             <div>
@@ -93,16 +107,9 @@ class PlayerShapes extends Component {
                     <tbody>
                         <tr>
                             <td><b>Eth Address</b></td>
-                            <td><b id={this.state.ethAddress}></b></td>
+                            <td><b id={this.state.ethAddress}>{this.state.ethAddress}</b></td>
                         </tr>
-                        <tr>
-                            <td><b>Email</b></td>
-                            <td><b id={this.state.email}></b></td>
-                        </tr>
-                        <tr>
-                            <td><b>Name</b></td>
-                            <td id={this.state.name}></td>
-                        </tr>
+                        {["name", "email"].map(this.infoTableRow)}
                     </tbody>
                 </table>
             </div>
@@ -123,10 +130,6 @@ class PlayerShapes extends Component {
             <ul className="actions">
                 <li><input type="text" name="new-shape-name" id="new-shape-name" value="" placeholder="Shape Info Goes Here" /></li>
                 <li><a className="button special" onClick={() => null}>Create New Animal</a></li>
-            </ul>
-            <hr/>
-            <ul className="actions">
-                <li><a className="button special" onClick={() => null}>Log Out</a></li>
             </ul>
             </div>
         );
