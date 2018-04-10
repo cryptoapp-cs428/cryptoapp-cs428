@@ -33,6 +33,24 @@ class Dashboard extends Component {
             that.setState({ email: json.email });
             that.setState({ name: json.name });
             that.setState({ ethAddress: json.ethAddress });
+            that.loadShapes();
+
+        }).catch(function(err) {
+            console.log(err);
+        });
+    }
+
+    loadShapes() {
+        var that = this;
+        fetch('shapes', {
+            method: 'get',
+            credentials: 'include',
+
+        }).then(function(response) {
+            return response.json();
+        }).then(function(json) {
+            that.setState({ myshapes: json.filter(shape => shape.userEthAddress.toLowerCase() === that.state.ethAddress.toLowerCase() ) });
+            that.setState({ othershapes: json.filter(shape => shape.userEthAddress.toLowerCase() !== that.state.ethAddress.toLowerCase() )});
 
         }).catch(function(err) {
             console.log(err);
@@ -50,8 +68,11 @@ class Dashboard extends Component {
                     <Header />
                     <div id="main">
                         <section id="content" className="main">
-                            <Route exact path="/dashboard" render={(props) => <PlayerShapes {...props} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
-                            <Route path="/dashboard/browse" component={OtherShapes} />
+                            <Route exact path="/dashboard" render={(props) =>
+                                    <PlayerShapes {...props} myshapes={this.state.myshapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
+
+                                <Route path="/dashboard/browse" render={(props) =>
+                                        <OtherShapes {...props} othershapes={this.state.othershapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
                             <Route path="/dashboard/challenges" component={Challenges} />
                             <Route path="/dashboard/history" component={BattleHistory} />
                         </section>

@@ -40,9 +40,8 @@ class PlayerShapes extends Component {
             ethAddress: props.ethAddress,
             name: props.name,
             email: props.email,
-            shapes: []
+            shapes: props.myshapes
         };
-        this.loadShapes();
     }
 
     addShape() {
@@ -50,22 +49,6 @@ class PlayerShapes extends Component {
     }
 
     componentDidMount() {}
-
-    loadShapes() {
-        var that = this;
-        fetch('shapes', {
-            method: 'get',
-            credentials: 'include',
-
-        }).then(function(response) {
-            return response.json();
-        }).then(function(json) {
-            that.setState({ shapes: json.filter((shape) => { return shape.userEthAddress.toLowerCase() === that.state.ethAddress.toLowerCase(); }) });
-
-        }).catch(function(err) {
-            console.log(err);
-        });
-    }
 
     // Some properties in the database are not actually stored
     // use arrow function here so that the this value is bound correctly
@@ -87,7 +70,10 @@ class PlayerShapes extends Component {
     }
 
     renderUserShapesTable() {
-        if (this.state.shapes.length > 0) {
+        if (!this.state.shapes) {
+            return <h2>Loading...</h2>;
+        }
+        else if (this.state.shapes.length > 0) {
             return (
                 <div>
                 <h2>Shapes</h2>

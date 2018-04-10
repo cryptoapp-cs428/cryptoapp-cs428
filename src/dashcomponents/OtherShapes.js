@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 class OtherShapes extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            ethAddress: props.ethAddress
+        };
     }
 
     componentDidMount() {
