@@ -6,17 +6,14 @@ class ShapeRow extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            shape: props.myshape
+            shape: props.shape
         };
     }
 
     componentDidMount() {
         var canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
-        console.log("the canvas", canvas);
         if (canvas.getContext) {
             var ctx = canvas.getContext("2d");
-            console.log(this.state.shape.color);
-            console.log(this.state.shape.color.toString(16));
             utility.createShape(ctx, this.state.shape.ethAddress, (this.state.shape.color).toString(16), this.state.shape.level);
         }
         else {
@@ -30,6 +27,7 @@ class ShapeRow extends Component {
                 <td>
                     <canvas id={this.state.shape.ethAddress} ref="myCanvas" width="100" style={{color: "#FF0000"}} height="100"></canvas>
                 </td>
+                <td> {this.state.shape.ethAddress}</td>
             </tr>
             );
     }
@@ -44,19 +42,16 @@ class PlayerShapes extends Component {
             email: props.email,
             shapes: []
         };
-        console.log(this.state);
         this.loadShapes();
     }
 
     addShape() {
-        console.log('addShape..');
+        console.log('addShape not implemented..');
     }
 
     componentDidMount() {}
 
     loadShapes() {
-        console.log('loading shape Data...');
-
         var that = this;
         fetch('shapes', {
             method: 'get',
@@ -65,8 +60,7 @@ class PlayerShapes extends Component {
         }).then(function(response) {
             return response.json();
         }).then(function(json) {
-            console.log("this is the user data: ", json);
-            that.setState({ shapes: json });
+            that.setState({ shapes: json.filter((shape) => { return shape.userEthAddress.toLowerCase() === that.state.ethAddress.toLowerCase(); }) });
 
         }).catch(function(err) {
             console.log(err);
@@ -92,18 +86,41 @@ class PlayerShapes extends Component {
         }
     }
 
-    render() {
-        return (
-            <div>
-            <h1>User Info</h1>
-            <div className="table-wrapper">
-                <table className="alt">
+    renderUserShapesTable() {
+        if (this.state.shapes.length > 0) {
+            return (
+                <div>
+                <h2>Shapes</h2>
+                <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Value</th>
+                            <th>Shape</th>
+                            <th>Shape Address</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        {
+                            this.state.shapes.map((shape) => {
+                                return <ShapeRow shape={shape} />;
+                            })
+                        }
+                    </tbody>
+                </table>
+                </div>
+            );
+        }
+        else {
+            return <h2>You Currently Have No Shapes.</h2>;
+        }
+    }
+
+    render() {
+        var that = this;
+        return (
+            <div>
+            <h2>User Info</h2>
+            <div className="table-wrapper">
+                <table className="alt">
                     <tbody>
                         <tr>
                             <td><b>Eth Address</b></td>
@@ -113,19 +130,7 @@ class PlayerShapes extends Component {
                     </tbody>
                 </table>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Shape</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.shapes.map(function(shape) {
-                        console.log(shape);
-                        return (<ShapeRow myshape={shape} />);
-                    })}
-                </tbody>
-            </table>
+            {this.renderUserShapesTable()}
             <h3>Actions</h3>
             <ul className="actions">
                 <li><input type="text" name="new-shape-name" id="new-shape-name" value="" placeholder="Shape Info Goes Here" /></li>

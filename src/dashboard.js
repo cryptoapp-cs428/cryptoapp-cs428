@@ -30,8 +30,6 @@ class Dashboard extends Component {
         }).then(function(response) {
             return response.json();
         }).then(function(json) {
-            console.log("user data", json);
-
             that.setState({ email: json.email });
             that.setState({ name: json.name });
             that.setState({ ethAddress: json.ethAddress });
@@ -43,23 +41,6 @@ class Dashboard extends Component {
 
     async componentDidMount() {
 
-    }
-
-    logOut() {
-        console.log('logOut..');
-
-        fetch('logout', {
-            method: 'get',
-            credentials: 'include'
-        }).then(function(response) {
-            if (response.redirected) {
-                return window.location.replace(response.url);
-            }
-
-            console.log(response);
-        }).catch(function(err) {
-            console.log(err);
-        });
     }
 
     render() {

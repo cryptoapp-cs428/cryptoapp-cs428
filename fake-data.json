@@ -87,6 +87,15 @@
         "experience": 6,
         "level": 2,
         "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x633CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0x2d5ee71500dae252c341d7271a12372b7361b6e7",
+        "color": 16711680,
+        "experience": 99,
+        "level": 4,
+        "seekingRandom": false
     }
 
 ]
