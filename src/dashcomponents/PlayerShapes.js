@@ -88,7 +88,6 @@ class PlayerShapes extends Component {
             {this.renderUserShapesTable()}
             <h3>Actions</h3>
             <ul className="actions">
-                <li><input type="text" name="new-shape-name" id="new-shape-name" value="" placeholder="Shape Info Goes Here" /></li>
                 <li><a className="button special" onClick={this.createShape.bind(this)}>Create New Shape</a></li>
             </ul>
             </div>

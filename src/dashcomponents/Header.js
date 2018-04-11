@@ -30,8 +30,6 @@ class NavBar extends Component {
                 <ul>
                     <li><Link to='/dashboard'>My Shapes</Link></li>
                     <li><Link to='/dashboard/browse'>Browse</Link></li>
-                    <li><Link to='/dashboard/challenges'>Challenges</Link></li>
-                    <li><Link to='/dashboard/history'>History</Link></li>
                     <li><a href="" onClick={this.logOut}>Log Out</a></li>
                 </ul>
             </nav>);

@@ -73,8 +73,6 @@ class Dashboard extends Component {
 
                                 <Route path="/dashboard/browse" render={(props) =>
                                         <OtherShapes {...props} othershapes={this.state.othershapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
-                            <Route path="/dashboard/challenges" component={Challenges} />
-                            <Route path="/dashboard/history" component={BattleHistory} />
                         </section>
                     </div>
 
