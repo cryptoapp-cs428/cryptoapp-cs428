@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import ShapeRow from './ShapeRow';
 
 class OtherShapes extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            ethAddress: props.ethAddress,
+            shapes: props.othershapes
+        };
     }
 
     componentDidMount() {
@@ -11,29 +15,37 @@ class OtherShapes extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <h1>Browse Shapes</h1>
-                <table className="alt">
+        if (!this.state.shapes) {
+            return <h2>Loading...</h2>;
+        }
+        else if (this.state.shapes.length > 0) {
+            return (
+                <div>
+                <h2>Browse Shapes</h2>
+                <table>
                     <thead>
                         <tr>
-                          <th>Owner</th>
-                          <th>Name</th>
-                          <th>Color</th>
+                            <th>Shape</th>
+                            <th>Shape Address</th>
+                            <th>User Address</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        <tr>
-                            <td>owner</td>
-                            <td>name</td>
-                            <td>color</td>
-                        </tr>
+                        {
+                            this.state.shapes.map((shape) => {
+                                return <ShapeRow shape={shape} challenge={true} />;
+                            })
+                        }
                     </tbody>
                 </table>
-            </div>
-        );
+                </div>
+            );
+        }
+        else {
+            return <h2>There are currently no shapes in existence.</h2>;
+        }
     }
 }
 
 export default OtherShapes;
+

@@ -127,7 +127,13 @@ const createUser = (req, res, ethAddress, signature, cb) => {
 
 
 const authenticateRequest = (req, res, cb) => {
+    console.dir("-----ENTRY------")
+    console.dir(req.body.token)
+    console.dir(req.query.token)
+    console.dir(req.headers['x-access-token'])
+    console.dir(req.cookies.token)
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.cookies.token;
+    console.dir("-----EXIT------")
 
     // Check if token exists
     if (!token) {
@@ -242,15 +248,14 @@ app.get('/logout', (req, res) => {
  * Returns all the shapes owned by the current user
  */
 app.get('/shapes', (req, res) => {
-    console.log("");
     console.log('Get Shapes..');
 
     //authenticateRequest((req, res, user => {
-    models.Shape.findAll({
-        //where: {
-        //userEthAddress: user.ethAddress,
-        //}
-    })
+        models.Shape.findAll({
+            // where: {
+            //     userEthAddress: user.ethAddress,
+            // }
+        })
         .then(function(shapesRaw) {
             return res.status(200).send(shapesRaw);
         });
@@ -738,53 +743,23 @@ models.sequelize.sync().then(function() {
         console.log('╚════════════════════════╝');
     });
 
-
-
-    // Fake data
-
     // Only run this when you want to write some dummy data.
-    if(false) {
-        models.Shape.create({
-            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC01",
-            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
-            color: 0xff0000,
-            experience: 10,
-            level: 1,
-            seekingRandom: false
-        }).then(newShape => {
+    // Fake data
+    var fakeData;
+    fs.readFile('fake-data.json', 'utf8', function (err, data) {
+        // don't really want to crash if this fails
+        // so just log instead of throwing error
+        if (err) console.error(err);
+        fakeData = JSON.parse(data);
 
-        }).catch(err => {
-            console.log(err);
+        // check if there are any Shapes, if not, create the dummy shapes
+        models.Shape.count().then(c => {
+            if (c == 0) {
+                fakeData.forEach((shape) => {
+                    models.Shape.create(shape).then((s) => { console.log("Created dummy shape:", s.ethAddress); });
+                });
+            }
         });
-
-
-        models.Shape.create({
-            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC02",
-            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
-            color: 0x00ff00,
-            experience: 20,
-            level: 2,
-            seekingRandom: false
-        }).then(newShape => {
-
-        }).catch(err => {
-            console.log(err);
-        });
-
-
-        models.Shape.create({
-            ethAddress: "0xf33CDA0a124765A633dCf33CDA0a124765A633dC03",
-            userEthAddress: "0x0xBbA40E28f33CDA0a124765A633dC91D379f9Bba2",
-            color: 0x0000ff,
-            experience: 30,
-            level: 3,
-            seekingRandom: false
-        }).then(newShape => {
-
-        }).catch(err => {
-            console.log(err);
-        });
-    }
-
-
+    });
 });
+

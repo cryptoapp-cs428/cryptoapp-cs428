@@ -22,8 +22,7 @@ class Dashboard extends Component {
     }
 
     loadUserData() {
-        console.log('loadUserData..');
-
+        var that = this;
         fetch('user', {
             method: 'get',
             credentials: 'include',
@@ -31,11 +30,27 @@ class Dashboard extends Component {
         }).then(function(response) {
             return response.json();
         }).then(function(json) {
-            console.log(json);
+            that.setState({ email: json.email });
+            that.setState({ name: json.name });
+            that.setState({ ethAddress: json.ethAddress });
+            that.loadShapes();
 
-            this.setState({ email: json.email });
-            this.setState({ name: json.name });
-            this.setState({ ethAddress: json.ethAddress });
+        }).catch(function(err) {
+            console.log(err);
+        });
+    }
+
+    loadShapes() {
+        var that = this;
+        fetch('shapes', {
+            method: 'get',
+            credentials: 'include',
+
+        }).then(function(response) {
+            return response.json();
+        }).then(function(json) {
+            that.setState({ myshapes: json.filter(shape => shape.userEthAddress.toLowerCase() === that.state.ethAddress.toLowerCase() ) });
+            that.setState({ othershapes: json.filter(shape => shape.userEthAddress.toLowerCase() !== that.state.ethAddress.toLowerCase() )});
 
         }).catch(function(err) {
             console.log(err);
@@ -46,23 +61,6 @@ class Dashboard extends Component {
 
     }
 
-    logOut() {
-        console.log('logOut..');
-
-        fetch('logout', {
-            method: 'get',
-            credentials: 'include'
-        }).then(function(response) {
-            if (response.redirected) {
-                return window.location.replace(response.url);
-            }
-
-            console.log(response);
-        }).catch(function(err) {
-            console.log(err);
-        });
-    }
-
     render() {
         return (
             <Router>
@@ -70,10 +68,11 @@ class Dashboard extends Component {
                     <Header />
                     <div id="main">
                         <section id="content" className="main">
-                            <Route exact path="/dashboard" render={(props) => <PlayerShapes {...props} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
-                            <Route path="/dashboard/browse" component={OtherShapes} />
-                            <Route path="/dashboard/challenges" component={Challenges} />
-                            <Route path="/dashboard/history" component={BattleHistory} />
+                            <Route exact path="/dashboard" render={(props) =>
+                                    this.state.myshapes ? <PlayerShapes {...props} myshapes={this.state.myshapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} /> : null } />
+
+                                <Route path="/dashboard/browse" render={(props) =>
+                                        <OtherShapes {...props} othershapes={this.state.othershapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
                         </section>
                     </div>
 

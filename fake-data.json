@@ -1,0 +1,101 @@
+[
+    {
+        "ethAddress": "0xf33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded1294adf8bd9B4a2B70A38DAC791E3c896",
+        "color": 16711680,
+        "experience": 30,
+        "level": 0,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0xe33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df3bd9B4a2B70A38DAC791E3c896",
+        "color": 65280,
+        "experience": 22,
+        "level": 1,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0xd33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 255,
+        "experience": 0,
+        "level": 2,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0xc33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 16776960,
+        "experience": 8,
+        "level": 3,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0xb33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 16711935,
+        "experience": 13,
+        "level": 4,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0xa33CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12949df8bd9B4a2B70A38DAC791E3c896",
+        "color": 65535,
+        "experience": 28,
+        "level": 1,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x933CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xcb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 8388736,
+        "experience": 10,
+        "level": 0,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x833CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xeb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 32768,
+        "experience": 10,
+        "level": 4,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x733CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 15771652,
+        "experience": 19,
+        "level": 3,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x633CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0xDb0cded12942df8bd9B4a2B70A38DAC791E3c896",
+        "color": 8421504,
+        "experience": 6,
+        "level": 2,
+        "seekingRandom": false
+    },
+
+    {
+        "ethAddress": "0x633CDA0a124765A633dCf33CDA0a124765A633dC03",
+        "userEthAddress": "0x2d5ee71500dae252c341d7271a12372b7361b6e7",
+        "color": 16711680,
+        "experience": 99,
+        "level": 4,
+        "seekingRandom": false
+    }
+
+]
