@@ -7,10 +7,10 @@
       } : null;
   }
 
-  function getRandomColor() {
+  function getRandomStr(val) {
     var letters = '0123456789ABCDEF';
     var color = '';
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < val; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
@@ -173,10 +173,25 @@ const utility = {
       ctx.putImageData(image, 0, 0);
     },
 
+    randomShape: function (userAddress){
+      var returnValue = {
+        userEthAddress: userAddress,
+        ethAddress: "",
+        color: "",
+        level: 0
+      };
+
+      returnValue.ethAddress = "0x" + getRandomStr(42);
+      returnValue.color = getRandomStr(6);
+      returnValue.level = Math.floor(Math.random() * 6);
+
+      return returnValue;
+    },
+
     createShape: function(ctx, value, color, level) {
       if (!value){
         //value = '99ad7768f2aa9a1964d6812ke55m1gkr2d7o6719d96ne2gg';
-        value = (Math.floor(Math.random() * 16)).toString(16).toUpperCase() + getRandomColor() + 'aaa';
+        value = (Math.floor(Math.random() * 16)).toString(16).toUpperCase();
         console.log(value);
       }
       // var color = '#' + value.substring(2, 8);
@@ -211,13 +226,13 @@ const utility = {
           break;
         case 4:
         console.log("PENTAGON");
-        this.pentagon(ctx, 35, 35, 75, 75, color);
+        this.pentagon(ctx, 3, 3, 75, 75, color);
         ctx.fill();
         ctx.stroke();
           break;
         default:
         console.log("PENTAGON");
-        this.pentagon(ctx, 80, 50, 75, 75, color);
+        this.pentagon(ctx, 3, 3, 75, 75, color);
         ctx.fill();
         ctx.stroke();
 

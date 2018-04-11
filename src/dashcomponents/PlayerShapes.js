@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import utility from "./createShapes";
 import ShapeRow from './ShapeRow';
 
 class PlayerShapes extends Component {
@@ -12,8 +13,10 @@ class PlayerShapes extends Component {
         };
     }
 
-    addShape() {
-        console.log('addShape not implemented..');
+    createShape() {
+        console.log("createing shpasdof");
+        this.state.shapes.push(utility.randomShape(this.state.ethAddress));
+        this.setState({shapes: this.state.shapes });
     }
 
     componentDidMount() {}
@@ -87,7 +90,7 @@ class PlayerShapes extends Component {
             <h3>Actions</h3>
             <ul className="actions">
                 <li><input type="text" name="new-shape-name" id="new-shape-name" value="" placeholder="Shape Info Goes Here" /></li>
-                <li><a className="button special" onClick={() => null}>Create New Animal</a></li>
+                <li><a className="button special" onClick={this.createShape.bind(this)}>Create New Shape</a></li>
             </ul>
             </div>
         );
