@@ -15,8 +15,7 @@ class PlayerShapes extends Component {
 
     createShape() {
         console.log("createing shpasdof");
-        this.state.shapes.push(utility.randomShape(this.state.ethAddress));
-        this.setState({shapes: this.state.shapes });
+        this.setState({shapes: [...this.state.shapes, utility.randomShape(this.state.ethAddress)] });
     }
 
     componentDidMount() {}
