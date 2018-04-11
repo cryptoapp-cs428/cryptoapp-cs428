@@ -69,7 +69,6 @@ class PlayerShapes extends Component {
     }
 
     render() {
-        var that = this;
         return (
             <div>
             <h2>User Info</h2>

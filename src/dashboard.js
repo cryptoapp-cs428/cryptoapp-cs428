@@ -69,7 +69,7 @@ class Dashboard extends Component {
                     <div id="main">
                         <section id="content" className="main">
                             <Route exact path="/dashboard" render={(props) =>
-                                    <PlayerShapes {...props} myshapes={this.state.myshapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
+                                    this.state.myshapes ? <PlayerShapes {...props} myshapes={this.state.myshapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} /> : null } />
 
                                 <Route path="/dashboard/browse" render={(props) =>
                                         <OtherShapes {...props} othershapes={this.state.othershapes} ethAddress={this.state.ethAddress} name={this.state.name} email={this.state.email} />} />
